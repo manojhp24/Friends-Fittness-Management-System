@@ -11,7 +11,6 @@ class MembersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    AppSizes.init(context);
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -26,22 +25,40 @@ class MembersScreen extends StatelessWidget {
         ),
       ),
 
-      body: Padding(
-        padding: EdgeInsets.all(AppSizes.screenPadding),
-        child: ListView.separated(
-          itemCount: 13,
-          separatorBuilder: (context, index) =>
-              SizedBox(height: AppSizes.spaceM),
-          itemBuilder: (context, index) {
-            return MemberTile(
-              name: "Manoj",
-              email: "manojhp584@gmail.com",
-              plan: "Basic",
-              expiryDate: "15/12/2025",
-              daysLeft: "40",
-              status: "Active",
-            );
+      body: SafeArea(
+        child: RefreshIndicator(
+          color: Theme.of(context).colorScheme.primary,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+          onRefresh: () async {
+            await Future.delayed(const Duration(seconds: 1));
           },
+          child: Scrollbar(
+            thumbVisibility: false,
+            radius: const Radius.circular(12),
+            thickness: 4,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(AppSizes.screenPadding(context)),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: 6,
+                  separatorBuilder: (context, index) =>
+                      SizedBox(height: AppSizes.spaceM(context)),
+                  itemBuilder: (context, index) {
+                    return MemberTile(
+                      name: "Manoj",
+                      email: "manojhp584@gmail.com",
+                      plan: "Basic",
+                      expiryDate: "15/12/2025",
+                      daysLeft: "40",
+                      status: "Active",
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
         ),
       ),
 

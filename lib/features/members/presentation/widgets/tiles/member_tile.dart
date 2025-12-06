@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gym_management_system/core/config/app_sizes.dart';
+import '../../../../../core/config/app_sizes.dart';
+import '../../../../../core/extensions/extensions.dart';
 
 class MemberTile extends StatelessWidget {
   final String name;
@@ -26,7 +27,7 @@ class MemberTile extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: scheme.surfaceContainerLow,
+        color: scheme.surfaceContainerLowest,
         border: Border.all(color: scheme.outlineVariant),
       ),
       child: Material(
@@ -34,23 +35,25 @@ class MemberTile extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {},
-          splashColor: scheme.primary.withValues(alpha: 0.08),
+          splashColor: scheme.primary.withOpacity(0.08),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                /// TOP ROW
+
+                /// ---------- TOP ROW ----------
                 Row(
                   children: [
                     CircleAvatar(
-                      radius: AppSizes.radius * 1.9,
+                      radius: AppSizes.radius(context) * 1.9,
                       backgroundColor: scheme.primaryContainer,
                       child: Text(
                         name.isNotEmpty ? name[0].toUpperCase() : "?",
-                        style: TextStyle(
-                          color: scheme.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.bold
+                            .copyWith(color: scheme.primary),
                       ),
                     ),
 
@@ -63,18 +66,18 @@ class MemberTile extends StatelessWidget {
                         children: [
                           Text(
                             name,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: scheme.onSurface,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.bold
+                                .copyWith(color: scheme.onSurface),
                           ),
                           Text(
                             email,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: scheme.onSurfaceVariant,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(color: scheme.onSurfaceVariant),
                           ),
                         ],
                       ),
@@ -84,68 +87,65 @@ class MemberTile extends StatelessWidget {
                     Chip(
                       label: Text(
                         status,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: scheme.onTertiaryContainer,
-                        ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelSmall
+                            ?.semiBold
+                            .copyWith(color: scheme.onTertiaryContainer),
                       ),
                       backgroundColor: scheme.tertiaryContainer,
                       side: BorderSide.none,
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                     )
-
                   ],
                 ),
 
                 const SizedBox(height: 16),
 
-                /// DETAILS + DAYS LEFT
+                /// ---------- DETAILS + DAYS LEFT ----------
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    /// MEMBERSHIP INFO
+
+                    /// Membership Info
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Icon(
-                              Icons.badge,
-                              size: 18,
-                              color: scheme.onSurfaceVariant,
-                            ),
+                            Icon(Icons.badge, size: 18, color: scheme.onSurfaceVariant),
                             const SizedBox(width: 6),
                             Text(
                               plan,
-                              style: TextStyle(color: scheme.onSurface),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.semiBold
+                                  .copyWith(color: scheme.onSurface),
                             ),
                           ],
                         ),
                         const SizedBox(height: 6),
+
                         Row(
                           children: [
-                            Icon(
-                              Icons.calendar_today_rounded,
-                              size: 18,
-                              color: scheme.onSurfaceVariant,
-                            ),
+                            Icon(Icons.calendar_today_rounded, size: 18, color: scheme.onSurfaceVariant),
                             const SizedBox(width: 6),
                             Text(
                               "Expires: $expiryDate",
-                              style: TextStyle(color: scheme.onSurfaceVariant),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: scheme.onSurfaceVariant),
                             ),
                           ],
                         ),
                       ],
                     ),
 
-                    /// DAYS LEFT BADGE
+                    /// Days Left Badge
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 10,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         color: scheme.primaryContainer,
@@ -154,18 +154,18 @@ class MemberTile extends StatelessWidget {
                         children: [
                           Text(
                             daysLeft,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: scheme.primary,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.bold
+                                .copyWith(color: scheme.primary),
                           ),
                           Text(
                             "days left",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: scheme.primary.withValues(alpha: 0.9),
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(color: scheme.primary.withOpacity(0.9)),
                           ),
                         ],
                       ),

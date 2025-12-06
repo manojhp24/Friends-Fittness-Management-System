@@ -3,47 +3,70 @@ import 'package:flutter/material.dart';
 class AppSizes {
   AppSizes._();
 
-  static late double screenWidth;
-  static late double screenHeight;
+  // base screen width used for scale
+  static const double _designWidth = 375.0;
 
-  static void init(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    screenWidth = size.width;
-    screenHeight = size.height;
+  static double screenWidth(BuildContext context) =>
+      MediaQuery.of(context).size.width;
+
+  static double screenHeight(BuildContext context) =>
+      MediaQuery.of(context).size.height;
+
+  // Layout padding
+  static double screenPadding(BuildContext context) =>
+      screenWidth(context) * 0.04;
+
+  static double cardPadding(BuildContext context) =>
+      screenWidth(context) * 0.04;
+
+  static double sectionSpace(BuildContext context) =>
+      screenHeight(context) * 0.02;
+
+  // Spacing variants
+  static double spaceS(BuildContext context) =>
+      screenHeight(context) * 0.012;
+
+  static double spaceM(BuildContext context) =>
+      screenHeight(context) * 0.02;
+
+  static double spaceL(BuildContext context) =>
+      screenHeight(context) * 0.03;
+
+  // Border radius
+  static double radius(BuildContext context) =>
+      screenWidth(context) * 0.03;
+
+  // Avatar size
+  static double avatarSize(BuildContext context) =>
+      screenWidth(context) * 0.12;
+
+  // Text scale based on screen width
+  static double textScale(BuildContext context) {
+    double scale = screenWidth(context) / _designWidth;
+    return scale.clamp(0.85, 1.2);
   }
 
-  // Layout & spacing
-  static double get screenPadding => screenWidth * 0.04;
-
-  static double get cardPadding => screenWidth * 0.04;
-
-  static double get sectionSpace => screenHeight * 0.02;
-
-  static double get spaceS => screenHeight * 0.012;
-
-  static double get spaceM => screenHeight * 0.02;
-
-  static double get spaceL => screenHeight * 0.03;
-
-  // Radius
-  static double get radius => screenWidth * 0.03;
-
-  // Avatar sizing
-  static double get avatarSize => screenWidth * 0.12;
-
-  // Text scaling (responsive typography)
-  static double get textScale {
-    const baseWidth = 375.0; // standard design width
-    double scale = screenWidth / baseWidth;
-    return scale.clamp(0.85, 1.2); // prevents too small or too large text
+  // Icon size responsive (general purpose)
+  static double iconSize(BuildContext context) {
+    double scale = screenWidth(context) / _designWidth;
+    return (24 * scale).clamp(18, 32);
   }
 
-  static double get iconSize {
-    const baseWidth = 375.0;
-    double scale = screenWidth / baseWidth;
+  // Icon size for input fields (smaller, more proportional)
+  static double inputIconSize(BuildContext context) {
+    double scale = screenWidth(context) / _designWidth;
+    return (20 * scale).clamp(16, 24);
+  }
 
-    double size = 24 * scale;
+  // Icon size for buttons
+  static double buttonIconSize(BuildContext context) {
+    double scale = screenWidth(context) / _designWidth;
+    return (22 * scale).clamp(18, 28);
+  }
 
-    return size.clamp(18, 32);
+  // Icon size for large/primary actions
+  static double largeIconSize(BuildContext context) {
+    double scale = screenWidth(context) / _designWidth;
+    return (28 * scale).clamp(24, 36);
   }
 }

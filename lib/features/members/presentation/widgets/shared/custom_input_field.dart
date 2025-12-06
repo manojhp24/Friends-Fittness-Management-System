@@ -13,6 +13,8 @@ class CustomInputField extends StatelessWidget {
   final bool? alignLabelWithHint;
   final FocusNode? focusNode;
   final VoidCallback? onTap;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
 
   const CustomInputField({
     super.key,
@@ -22,9 +24,12 @@ class CustomInputField extends StatelessWidget {
     this.validator,
     this.obscureText = false,
     this.readOnly = false,
-    this.maxLines,
+    this.maxLines = 1,
     this.alignLabelWithHint,
-    this.maxLength, this.focusNode, this.onTap,
+    this.maxLength,
+    this.focusNode,
+    this.onTap,
+    this.prefixIcon, this.suffixIcon,
   });
 
   @override
@@ -33,7 +38,7 @@ class CustomInputField extends StatelessWidget {
       onTap: readOnly ? onTap : null,
       focusNode: focusNode,
       maxLength: maxLength,
-      maxLines: maxLines,
+      maxLines: obscureText ? 1 : maxLines,
       readOnly: readOnly,
       controller: controller,
       keyboardType: keyboardType,
@@ -42,9 +47,11 @@ class CustomInputField extends StatelessWidget {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       style: Theme.of(context).textTheme.bodyMedium?.responsive,
       decoration: InputDecoration(
+        suffixIcon: suffixIcon,
+        prefixIcon: prefixIcon,
         labelText: label,
-          alignLabelWithHint: alignLabelWithHint,
-          counterText: ""
+        alignLabelWithHint: alignLabelWithHint,
+        counterText: "",
       ),
     );
   }

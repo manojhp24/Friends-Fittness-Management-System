@@ -19,7 +19,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    AppSizes.init(context);
     return AppBar(
       elevation: 0,
       scrolledUnderElevation: 1,
@@ -29,7 +28,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? IconButton(
               icon: Icon(
                 Icons.arrow_back_ios_new_rounded,
-                size: AppSizes.iconSize,
+                size: AppSizes.iconSize(context),
                 color: scheme.onSurfaceVariant,
               ),
               onPressed: () => Navigator.pop(context),
@@ -46,7 +45,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         if (action != null) action!,
-        SizedBox(width: AppSizes.spaceS),
+        SizedBox(width: AppSizes.spaceS(context)),
       ],
     );
   }
