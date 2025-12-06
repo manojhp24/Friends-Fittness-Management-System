@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "748650500712",
+    "project_id": "friends-fitness-gms",
+    "storage_bucket": "friends-fitness-gms.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:748650500712:android:eda94ee1ab53d2e84b21dd",
+        "android_client_info": {
+          "package_name": "com.example.gym_management_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSuYYGHEsqMl8ISezx_OwAMm3Xjur4J9g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
