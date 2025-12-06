@@ -26,8 +26,8 @@ class MemberTile extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.22),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.6)),
+        color: scheme.surfaceContainerLow,
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: Material(
         color: Colors.transparent,
