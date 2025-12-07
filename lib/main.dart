@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gym_management_system/core/di/service_locator.dart';
 import 'package:gym_management_system/core/network/network_info.dart';
 import 'package:gym_management_system/core/services/firebase_initializer.dart';
@@ -13,13 +14,6 @@ Future<void> main() async {
   // 2. Initialize GetIt dependencies
   await initServiceLocator();
 
-  // 3. Test network after plugins are ready
-  final networkInfo = sl<NetworkInfo>();
-  final isConnected = await networkInfo.isConnected;
 
-  print(isConnected
-      ? "🌍 Internet Available"
-      : "🚫 No Internet Connection");
-
-  runApp(const MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
