@@ -4,4 +4,6 @@ import 'package:gym_management_system/features/authentication/domain/entities/us
 
 abstract class AuthRepository {
   Future<DataState<UserEntity>> login(LoginCredentials credentials);
+
+  Future<DataState<void>> resetPassword(String email);
 }

@@ -1,16 +1,39 @@
 class FirebaseAuthExceptionsMapper {
   static String map(String code) {
-    const errors = {
-      'invalid-email'        : "Invalid email format.",
-      'wrong-password'       : "Incorrect password.",
-      'invalid-credential'   : "Incorrect email or password.",
-      'user-not-found'       : "No account found with this email.",
-      'email-already-in-use' : "This email is already registered.",
-      'user-disabled'        : "This account has been disabled. Pay remaining amount to activate.",
-      'too-many-requests'    : "Too many attempts. Please try again later.",
-      'network-request-failed': "Network error. Check your internet connection.",
-    };
+    switch (code) {
 
-    return errors[code] ?? "Something went wrong. Please try again.";
+      case 'invalid-email':
+        return "Enter a valid email address.";
+
+      case 'missing-email':
+        return "Please enter your email.";
+
+      case 'user-not-found':
+        return "No account found with this email.";
+
+      case 'email-already-in-use':
+        return "This email is already registered.";
+
+      case 'invalid-credential':
+        return "Authentication failed. Try again.";
+
+      case 'user-disabled':
+        return "This account has been disabled. Please contact support.";
+
+      case 'operation-not-allowed':
+        return "This action is not allowed right now.";
+
+      case 'too-many-requests':
+        return "Too many attempts. Try again later.";
+
+      case 'network-request-failed':
+        return "Network error. Check your internet connection.";
+
+      case 'internal-error':
+        return "Something went wrong. Try again later.";
+
+      default:
+        return "Unexpected error occurred. Please try again.";
+    }
   }
 }

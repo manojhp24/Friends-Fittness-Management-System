@@ -17,25 +17,17 @@ class LoginForm extends ConsumerStatefulWidget {
 }
 
 class _LoginFormState extends ConsumerState<LoginForm> {
+  final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>(
+      debugLabel: '_loginScreen');
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final notifier = ref.read(authNotifierProvider.notifier);
-
-
-    ref.listen(authNotifierProvider, (prev, next) {
-      if (next.error != null) {
-        AppSnackBar.error(context, next.error!);
-      }
-
-      if (next.successMessage != null) {
-        AppSnackBar.success(context, next.successMessage!);
-      }
-    });
-
+    final authState = ref.watch(authNotifierProvider);
 
     return Form(
-      key: notifier.loginFormKey,
+      key: _loginFormKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -54,11 +46,13 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             controller: notifier.passwordController,
             validator: (password) => AuthValidators.validatePassword(password!),
             label: "Password",
-            obscureText: true,
+            obscureText: authState.isPasswordVisible ? false : true,
             suffixIcon: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                ref.read(authNotifierProvider.notifier).togglePassword();
+              },
               icon: Icon(
-                Iconsax.eye_slash,
+                authState.isPasswordVisible ? Iconsax.eye : Iconsax.eye_slash,
                 color: scheme.primary,
                 size: AppSizes.inputIconSize(context),
               ),
@@ -74,7 +68,9 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.push('/forgot-password');
+                },
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
                   minimumSize: Size(0, 0),
@@ -96,8 +92,14 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             height: 56,
             child: ElevatedButton(
               onPressed: () async {
+                if (!_loginFormKey.currentState!.validate()) {
+                  AppSnackBar.error(context, "Please enter valid credentials");
+                  return;
+                }
+
                 notifier.login();
               },
+
               style: ElevatedButton.styleFrom(
                 backgroundColor: scheme.primary,
                 foregroundColor: scheme.onPrimary,

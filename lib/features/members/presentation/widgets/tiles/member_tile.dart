@@ -35,7 +35,7 @@ class MemberTile extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {},
-          splashColor: scheme.primary.withOpacity(0.08),
+          splashColor: scheme.primary.withValues(alpha: 0.08),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -165,7 +165,7 @@ class MemberTile extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .labelSmall
-                                ?.copyWith(color: scheme.primary.withOpacity(0.9)),
+                                ?.copyWith(color: scheme.primary.withValues(alpha: 0.9)),
                           ),
                         ],
                       ),

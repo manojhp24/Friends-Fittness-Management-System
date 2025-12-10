@@ -17,12 +17,10 @@ class MembersScreen extends StatelessWidget {
         title: "Members",
         showBack: false,
         titleSpacing: 16.0,
-        action: Row(
-          children: [
+        actions: [
             IconButton(icon: Icon(Icons.search_rounded), onPressed: () {}),
             IconButton(icon: Icon(Icons.filter_list_rounded), onPressed: () {}),
           ],
-        ),
       ),
 
       body: SafeArea(

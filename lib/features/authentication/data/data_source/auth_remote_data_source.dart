@@ -11,4 +11,8 @@ class AuthRemoteDataSource {
       password: password,
     );
   }
+
+  Future<void> sendResetPasswordEmail(String email) {
+    return firebaseAuth.sendPasswordResetEmail(email: email);
+  }
 }

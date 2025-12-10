@@ -26,7 +26,18 @@ class AuthRepositoryImpl extends AuthRepository {
 
       return DataSuccess(user);
     } on FirebaseAuthException catch (e) {
-      print("🔥 Firebase Error: ${e.code} — ${e.message}");
+      return DataFailed(FirebaseAuthExceptionsMapper.map(e.code));
+    } catch (_) {
+      return DataFailed("Something went wrong. Please try again.");
+    }
+  }
+
+  @override
+  Future<DataState<void>> resetPassword(String email) async {
+    try {
+      await authRemoteDataSource.sendResetPasswordEmail(email);
+      return DataSuccess(null);
+    } on FirebaseAuthException catch (e) {
       return DataFailed(FirebaseAuthExceptionsMapper.map(e.code));
     } catch (_) {
       return DataFailed("Something went wrong. Please try again.");
