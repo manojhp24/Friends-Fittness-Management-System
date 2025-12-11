@@ -66,7 +66,7 @@ class MembersScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddMemberScreen()),
+            MaterialPageRoute(builder: (context) => AddMemberScreen()),
           );
         },
         child: Icon(Icons.add,color: scheme.onPrimaryContainer,),
