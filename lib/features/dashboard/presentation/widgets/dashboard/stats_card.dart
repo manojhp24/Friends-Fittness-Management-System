@@ -67,7 +67,8 @@ class StatsCard extends StatelessWidget {
             ),
             SizedBox(height: AppSizes.spaceS(context) * 0.2),
 
-            Text(subTitle, style: textTheme.bodySmall),
+            Text(subTitle,
+                style: textTheme.bodySmall?.copyWith(color: subTitleColor)),
           ],
         ),
       ),

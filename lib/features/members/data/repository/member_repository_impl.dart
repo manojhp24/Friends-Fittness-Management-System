@@ -24,4 +24,17 @@ class MemberRepositoryImpl extends MemberRepository {
       return DataFailed(e.toString());
     }
   }
+
+  @override
+  Future<DataState<List<MemberEntity>>> getMembers() async {
+    try {
+      final models = await _membersRemoteDataSource.getMembers();
+      final entities = models.map((m) => m.toEntity()).toList();
+      return DataSuccess(entities);
+    } on FirebaseException catch (e) {
+      return DataFailed(FirestoreExceptionsMapper.map(e.code));
+    } catch (e) {
+      return DataFailed(e.toString());
+    }
+  }
 }

@@ -20,6 +20,9 @@ void main() {
     fee: "1000",
     joinDate: DateTime.now(),
     address: "KRS",
+    isActive: true,
+    email: 'manojhp@gmail.com',
+    expiryDate: DateTime.now(),
   );
 
   setUp(() {

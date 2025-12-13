@@ -25,6 +25,7 @@ class AddMemberFormState extends State<AddMemberForm> {
 
   String? membership;
   DateTime? joinDate;
+  bool isActive = true;
 
   bool validate() => _formKey.currentState?.validate() ?? false;
 
@@ -43,6 +44,13 @@ class AddMemberFormState extends State<AddMemberForm> {
 
     setState(() {});
   }
+
+  final Map<String, String> membershipFee = {
+    '1 month': '999',
+    '3 months': '2699',
+    '6 months': '4999',
+    '1 year': '7499'
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -95,11 +103,12 @@ class AddMemberFormState extends State<AddMemberForm> {
               Expanded(
                 child: DropdownButtonFormField(
                   decoration: InputDecoration(labelText: "Membership"),
-                  items: ["Basic", "Standard", "Premium"].map((p) {
+                  items: ["1 month", "3 months", "6 months", "1 year"].map((p) {
                     return DropdownMenuItem(value: p, child: Text(p));
                   }).toList(),
                   onChanged: (value) {
                     membership = value;
+                    feesController.text = membershipFee[value] ?? "";
                   },
                 ),
               ),
@@ -110,6 +119,7 @@ class AddMemberFormState extends State<AddMemberForm> {
                   validator: (value) => MemberValidators.fee(value),
                   label: "Fee",
                   keyboardType: TextInputType.numberWithOptions(),
+                  readOnly: true,
                 ),
               ),
             ],
@@ -135,8 +145,33 @@ class AddMemberFormState extends State<AddMemberForm> {
               }
             },
           ),
+          SizedBox(height: AppSizes.spaceM(context)),
 
-          SizedBox(height: AppSizes.spaceL(context)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Active Member",
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .bodyMedium,
+                ),
+                Switch(
+                  value: isActive,
+                  onChanged: (value) {
+                    setState(() {
+                      isActive = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: AppSizes.spaceM(context)),
 
           CustomInputField(
             controller: addressController,
@@ -145,6 +180,7 @@ class AddMemberFormState extends State<AddMemberForm> {
             alignLabelWithHint: true,
           ),
           SizedBox(height: AppSizes.spaceL(context)),
+
         ],
       ),
     );

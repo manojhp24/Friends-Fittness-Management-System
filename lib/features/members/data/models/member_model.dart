@@ -11,6 +11,7 @@ class MemberModel extends MemberEntity {
     required super.fee,
     required super.joinDate,
     required super.address,
+    required super.isActive, required super.email, required super.expiryDate,
   });
 
   factory MemberModel.formFirestore(
@@ -28,6 +29,11 @@ class MemberModel extends MemberEntity {
           ? (data['joinDate'] as Timestamp).toDate()
           : DateTime.now(),
       address: data['address'] ?? '',
+      isActive: data['isActive'] ?? true,
+      email: data['email'] ?? '',
+        expiryDate: data['expiryDate'] != null
+            ? (data['expiryDate'] as Timestamp).toDate()
+            : DateTime.now(),
     );
   }
 
@@ -42,6 +48,9 @@ class MemberModel extends MemberEntity {
       fee: entity.fee,
       joinDate: entity.joinDate,
       address: entity.address,
+        isActive: entity.isActive,
+        email: entity.email,
+        expiryDate: entity.expiryDate
     );
   }
 
@@ -53,7 +62,26 @@ class MemberModel extends MemberEntity {
       'membership': membership,
       'fee': fee,
       'joinDate': joinDate,
+      'expiryDate': expiryDate,
       'address': address,
+      'isActive': isActive,
+      'email': email
     };
+  }
+
+  MemberEntity toEntity() {
+    return MemberEntity(
+        id: id,
+        fullName: fullName,
+        mobileNumber: mobileNumber,
+        aadhaarNumber: aadhaarNumber,
+        membership: membership,
+        fee: fee,
+        joinDate: joinDate,
+        address: address,
+        isActive: isActive,
+        email: email,
+        expiryDate: expiryDate
+    );
   }
 }

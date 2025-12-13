@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:gym_management_system/core/config/app_sizes.dart';
+import 'package:gym_management_system/core/helpers/calculate_days_left.dart';
 import 'package:gym_management_system/features/members/presentation/pages/add_member_screen.dart';
+import 'package:gym_management_system/features/members/presentation/provider/member_list/member_list_provider.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/widgets/custom_app_bar.dart';
+import '../widgets/shared/empty_state_widget.dart';
 import '../widgets/tiles/member_tile.dart';
 
-class MembersScreen extends StatelessWidget {
+class MembersScreen extends ConsumerWidget {
   const MembersScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final scheme = Theme.of(context).colorScheme;
+    final state = ref.watch(memberListNotifierProvider);
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -18,58 +25,95 @@ class MembersScreen extends StatelessWidget {
         showBack: false,
         titleSpacing: 16.0,
         actions: [
-            IconButton(icon: Icon(Icons.search_rounded), onPressed: () {}),
-            IconButton(icon: Icon(Icons.filter_list_rounded), onPressed: () {}),
-          ],
+          IconButton(icon: const Icon(Icons.search_rounded), onPressed: () {}),
+          IconButton(
+              icon: const Icon(Icons.filter_list_rounded), onPressed: () {}),
+        ],
       ),
 
       body: SafeArea(
         child: RefreshIndicator(
-          color: Theme.of(context).colorScheme.primary,
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+          color: scheme.primary,
+          backgroundColor: scheme.surfaceContainerHigh,
           onRefresh: () async {
-            await Future.delayed(const Duration(seconds: 1));
+            await ref.read(memberListNotifierProvider.notifier).getMembers();
           },
-          child: Scrollbar(
-            thumbVisibility: false,
-            radius: const Radius.circular(12),
-            thickness: 4,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(AppSizes.screenPadding(context)),
+
+          child: Builder(
+            builder: (_) {
+              if (state.isLoading) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 100),
+                    child: CircularProgressIndicator(strokeWidth: 3),
+                  ),
+                );
+              }
+
+
+              if (state.error != null) {
+                return Center(
+                  child: Text(
+                    state.error!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                );
+              }
+
+
+              if (state.members.isEmpty) {
+                return const EmptyStateWidget(
+                  icon: Icons.group_off,
+                  emptyMessage: "No members found",
+                );
+              }
+
+              return Scrollbar(
+                radius: const Radius.circular(12),
+                thickness: 4,
                 child: ListView.separated(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: 6,
-                  separatorBuilder: (context, index) =>
+                  padding: EdgeInsets.all(AppSizes.screenPadding(context)),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: state.members.length,
+                  separatorBuilder: (_, __) =>
                       SizedBox(height: AppSizes.spaceM(context)),
                   itemBuilder: (context, index) {
+                    final member = state.members[index];
+                    final expiryDate = DateFormat("MMM d, yyyy").format(
+                        member.expiryDate);
+                    final daysLeft = calculateDaysLeft(member.expiryDate);
                     return MemberTile(
-                      name: "Manoj",
-                      email: "manojhp584@gmail.com",
-                      plan: "Basic",
-                      expiryDate: "15/12/2025",
-                      daysLeft: "40",
-                      status: "Active",
+                      onTap: () {
+                        context.push('/member-details', extra: member);
+                      },
+                      name: member.fullName,
+                      mobile: '+91-${member.mobileNumber}',
+                      plan: member.membership,
+                      expiryDate: expiryDate,
+                      daysLeft: daysLeft.toString(),
+                      status: member.isActive ? "Active" : "Inactive",
                     );
                   },
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),
 
       floatingActionButton: FloatingActionButton(
-        
         backgroundColor: scheme.primaryContainer,
-        onPressed: () {
-          Navigator.push(
+        child: Icon(Icons.add, color: scheme.onPrimaryContainer),
+        onPressed: () async {
+          final added = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AddMemberScreen()),
           );
+
+          if (added == true) {
+            ref.read(memberListNotifierProvider.notifier).getMembers();
+          }
         },
-        child: Icon(Icons.add,color: scheme.onPrimaryContainer,),
       ),
     );
   }

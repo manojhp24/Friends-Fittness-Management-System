@@ -4,20 +4,21 @@ import '../../../../../core/extensions/extensions.dart';
 
 class MemberTile extends StatelessWidget {
   final String name;
-  final String email;
+  final String mobile;
   final String status;
   final String plan;
   final String expiryDate;
   final String daysLeft;
+  final void Function() onTap;
 
   const MemberTile({
     super.key,
     required this.name,
-    required this.email,
+    required this.mobile,
     required this.status,
     required this.plan,
     required this.expiryDate,
-    required this.daysLeft,
+    required this.daysLeft, required this.onTap,
   });
 
   @override
@@ -34,7 +35,7 @@ class MemberTile extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () {},
+          onTap: onTap,
           splashColor: scheme.primary.withValues(alpha: 0.08),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -73,7 +74,7 @@ class MemberTile extends StatelessWidget {
                                 .copyWith(color: scheme.onSurface),
                           ),
                           Text(
-                            email,
+                            mobile,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium
@@ -91,7 +92,7 @@ class MemberTile extends StatelessWidget {
                             .textTheme
                             .labelSmall
                             ?.semiBold
-                            .copyWith(color: scheme.onTertiaryContainer),
+                            .copyWith(color:  scheme.onTertiaryContainer),
                       ),
                       backgroundColor: scheme.tertiaryContainer,
                       side: BorderSide.none,

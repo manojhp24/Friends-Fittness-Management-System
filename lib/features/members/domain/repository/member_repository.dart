@@ -3,4 +3,5 @@ import 'package:gym_management_system/features/members/domain/entities/member_en
 
 abstract class MemberRepository {
   Future<DataState<String>> addMember(MemberEntity member);
+  Future<DataState<List<MemberEntity>>> getMembers();
 }

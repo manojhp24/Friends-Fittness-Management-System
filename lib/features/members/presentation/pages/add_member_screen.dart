@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gym_management_system/core/helpers/get_membership_days.dart';
 import 'package:gym_management_system/core/widgets/app_snackbar.dart';
 import 'package:gym_management_system/core/widgets/custom_app_bar.dart';
 import 'package:gym_management_system/core/widgets/loading_overlay.dart';
@@ -21,7 +22,7 @@ class AddMemberScreen extends ConsumerWidget {
         AppSnackBar.success(context, "Member added successfully");
         Future.microtask(() {
          if(context.mounted){
-           Navigator.pop(context);
+           Navigator.pop(context, true);
          }
         });
       }
@@ -55,7 +56,9 @@ class AddMemberScreen extends ConsumerWidget {
             if (!form.validate()) {
               AppSnackBar.error(context, "Please fill the form correctly");
               return;
+
             }
+            final days = getMembershipDays(form.membership!);
             final member = MemberEntity(
                 id: "",
                 fullName: form.fullNameController.text,
@@ -64,7 +67,10 @@ class AddMemberScreen extends ConsumerWidget {
                 membership: form.membership!,
                 fee: form.feesController.text,
                 joinDate: form.joinDate!,
-                address: form.addressController.text
+              expiryDate: form.joinDate!.add(Duration(days: days)),
+              address: form.addressController.text,
+              isActive: form.isActive,
+              email: form.emailController.text,
             );
 
             ref.read(addMemberNotifierProvider.notifier).addMember(member);

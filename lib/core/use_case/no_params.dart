@@ -1,3 +1,3 @@
-class NoParams {
-  const NoParams();
+abstract class UseCaseNoParams<T> {
+  Future<T> call();
 }

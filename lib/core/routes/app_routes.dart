@@ -5,9 +5,12 @@ import 'package:gym_management_system/features/authentication/presentation/pages
 import 'package:gym_management_system/features/authentication/presentation/pages/login_screen.dart';
 import 'package:gym_management_system/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:gym_management_system/features/dashboard/presentation/pages/main_screen.dart';
+import 'package:gym_management_system/features/members/data/models/member_model.dart';
+import 'package:gym_management_system/features/members/domain/entities/member_entity.dart';
 import 'package:gym_management_system/features/members/presentation/pages/members_screen.dart';
 
 import '../../features/authentication/presentation/provider/auth_provider.dart';
+import '../../features/members/presentation/pages/member_detail_screen.dart';
 
 class RouterNotifier extends ChangeNotifier {
   final Ref ref;
@@ -57,6 +60,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/main-screen', builder: (_, __) => const MainScreen()),
       GoRoute(path: '/forgot-password',
           builder: (_, __) => const ForgotPasswordScreen()),
+      GoRoute(path: "/member-details",
+          builder: (context, state) {
+            final member = state.extra as MemberEntity;
+            return MemberDetailScreen(member: member,);
+          }),
     ],
   );
 });
