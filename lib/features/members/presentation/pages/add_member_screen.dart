@@ -8,6 +8,7 @@ import 'package:gym_management_system/features/members/domain/entities/member_en
 import 'package:gym_management_system/features/members/presentation/provider/add_member/add_member_provider.dart';
 
 import '../../../../core/config/app_sizes.dart';
+import '../../../../core/helpers/string_helpers.dart';
 import '../widgets/forms/add_member_form.dart';
 
 class AddMemberScreen extends ConsumerWidget {
@@ -75,17 +76,18 @@ class AddMemberScreen extends ConsumerWidget {
 
             final memberEntity = MemberEntity(
               id: member?.id ?? "",
-              fullName: form.fullNameController.text,
-              mobileNumber: form.phoneNumberController.text,
-              aadhaarNumber: form.aadhaarNumberController.text,
+              fullName: StringHelpers.capitalizeWords(
+                  form.fullNameController.text),
+              mobileNumber: form.phoneNumberController.text.trim().replaceAll(
+                  " ", ""),
+              aadhaarNumber: form.aadhaarNumberController.text.trim(),
               membership: form.membership!,
-              fee: form.feesController.text,
+              fee: form.feesController.text.trim(),
               joinDate: form.joinDate!,
-              expiryDate:
-              form.joinDate!.add(Duration(days: days)),
-              address: form.addressController.text,
+              expiryDate: form.joinDate!.add(Duration(days: days)),
+              address: form.addressController.text.trim(),
               isActive: form.isActive,
-              email: form.emailController.text,
+              email: form.emailController.text.trim().toLowerCase(),
             );
 
             if (member == null) {

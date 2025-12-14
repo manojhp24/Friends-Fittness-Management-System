@@ -4,4 +4,5 @@ abstract class MembersRemoteDataSource {
   Future<String> addMember(Map<String, dynamic> data);
 
   Future<List<MemberModel>> getMembers();
+  Future<void> deleteMember(String memberId);
 }

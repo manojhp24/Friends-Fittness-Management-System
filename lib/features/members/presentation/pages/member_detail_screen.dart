@@ -1,23 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gym_management_system/core/config/app_sizes.dart';
 import 'package:gym_management_system/core/widgets/custom_app_bar.dart';
 import 'package:gym_management_system/features/members/domain/entities/member_entity.dart';
+import 'package:gym_management_system/features/members/presentation/provider/delete_member/delete_member_provider.dart';
 import 'package:gym_management_system/features/members/presentation/widgets/member_details/info_row.dart';
+import 'package:gym_management_system/features/members/presentation/widgets/shared/comfirm_dialog.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/widgets/app_snackbar.dart';
 import '../widgets/member_details/deatils_card.dart';
 import '../widgets/member_details/section_heading.dart';
 
-class MemberDetailScreen extends StatelessWidget {
+class MemberDetailScreen extends ConsumerWidget {
   final MemberEntity member;
 
   const MemberDetailScreen({super.key, required this.member});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(deleteMemberNotifierProvider, (prev, next) {
+      if (next.isSuccess!) {
+        AppSnackBar.success(
+            context, "Member delete successfull");
+      }
+      if (context.mounted) {
+        context.pop(true);
+      }
+
+      if (next.error != null) {
+        AppSnackBar.error(context, next.error!);
+      }
+    });
     final scheme = Theme.of(context).colorScheme;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final textTheme = Theme.of(context).textTheme;
@@ -185,39 +202,54 @@ class MemberDetailScreen extends StatelessWidget {
 
                 SizedBox(height: AppSizes.spaceM(context)),
 
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: scheme.primary,
-                      side: BorderSide(color: scheme.primary),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: scheme.primary,
+                          side: BorderSide(color: scheme.primary),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () {},
+                        child: const Text("Renew membership"),
                       ),
                     ),
-                    onPressed: () {},
-                    child: const Text("Renew membership"),
-                  ),
-                ),
 
-                SizedBox(height: AppSizes.spaceM(context)),
+                    SizedBox(width: AppSizes.spaceM(context)),
 
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: scheme.error,
-                      foregroundColor: scheme.onError,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: scheme.error,
+                          foregroundColor: scheme.onError,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () async {
+                          final confirm = await showConfirmDialog(
+                            context: context,
+                            title: "Delete Member",
+                            message: "Are you sure you want to delete this member?",
+                          );
+
+                          if (confirm == true) {
+                            ref
+                                .read(deleteMemberNotifierProvider.notifier)
+                                .deleteMember(member.id);
+                          }
+                        },
+                        child: const Text("Delete Member"),
                       ),
                     ),
-                    onPressed: () {},
-                    child: const Text("Delete Member"),
-                  ),
+                  ],
                 ),
+
 
               ],
             ),

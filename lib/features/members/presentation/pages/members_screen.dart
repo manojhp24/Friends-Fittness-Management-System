@@ -82,8 +82,14 @@ class MembersScreen extends ConsumerWidget {
                         member.expiryDate);
                     final daysLeft = calculateDaysLeft(member.expiryDate);
                     return MemberTile(
-                      onTap: () {
-                        context.push('/member-details', extra: member);
+                      onTap: () async {
+                        final deleted = await context.push(
+                            '/member-details', extra: member);
+                        if (deleted == true) {
+                          ref
+                              .read(memberListNotifierProvider.notifier)
+                              .getMembers();
+                        }
                       },
                       name: member.fullName,
                       mobile: '+91-${member.mobileNumber}',

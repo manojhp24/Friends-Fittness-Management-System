@@ -18,4 +18,12 @@ class FirebaseMembersRemoteDataSourceImpl implements MembersRemoteDataSource {
     final snapshot = await _firebaseFirestore.collection('members').get();
     return snapshot.docs.map((doc) => MemberModel.formFirestore(doc)).toList();
   }
+
+  @override
+  Future<void> deleteMember(String memberId) async {
+    return await _firebaseFirestore
+        .collection("members")
+        .doc(memberId)
+        .delete();
+  }
 }
