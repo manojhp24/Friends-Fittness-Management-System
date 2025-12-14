@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gym_management_system/core/di/service_locator.dart';
+import 'package:gym_management_system/core/services/firebase_initializer.dart';
 
 import 'app.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await FirebaseInitializer.init();
+
+  await initServiceLocator();
+
+
+  runApp(ProviderScope(child: MyApp()));
 }

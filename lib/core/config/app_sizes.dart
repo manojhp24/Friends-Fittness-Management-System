@@ -69,4 +69,14 @@ class AppSizes {
     double scale = screenWidth(context) / _designWidth;
     return (28 * scale).clamp(24, 36);
   }
+
+  static double responsiveAspectRatio(BuildContext context, {double heightFactor = 0.22}) {
+    final width = screenWidth(context);
+    final tileWidth = (width / 2) - (screenWidth(context) * 0.04);
+
+    final tileHeight = screenHeight(context) * heightFactor;
+
+    return tileWidth / tileHeight;
+  }
+
 }

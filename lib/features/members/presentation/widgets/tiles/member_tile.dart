@@ -4,20 +4,22 @@ import '../../../../../core/extensions/extensions.dart';
 
 class MemberTile extends StatelessWidget {
   final String name;
-  final String email;
+  final String mobile;
   final String status;
   final String plan;
   final String expiryDate;
   final String daysLeft;
+  final void Function() onTap;
 
   const MemberTile({
     super.key,
     required this.name,
-    required this.email,
+    required this.mobile,
     required this.status,
     required this.plan,
     required this.expiryDate,
     required this.daysLeft,
+    required this.onTap,
   });
 
   @override
@@ -27,20 +29,19 @@ class MemberTile extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: scheme.surfaceContainerLowest,
+        color: scheme.surface, // FIXED
         border: Border.all(color: scheme.outlineVariant),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () {},
-          splashColor: scheme.primary.withOpacity(0.08),
+          onTap: onTap,
+          splashColor: scheme.primary.withValues(alpha: 0.08),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-
                 /// ---------- TOP ROW ----------
                 Row(
                   children: [
@@ -53,13 +54,15 @@ class MemberTile extends StatelessWidget {
                             .textTheme
                             .titleMedium
                             ?.bold
-                            .copyWith(color: scheme.primary),
+                            .copyWith(
+                          color: scheme.onPrimaryContainer, // FIXED
+                        ),
                       ),
                     ),
 
                     const SizedBox(width: 14),
 
-                    /// NAME + EMAIL
+                    /// NAME + MOBILE
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,7 +76,7 @@ class MemberTile extends StatelessWidget {
                                 .copyWith(color: scheme.onSurface),
                           ),
                           Text(
-                            email,
+                            mobile,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium
@@ -91,9 +94,12 @@ class MemberTile extends StatelessWidget {
                             .textTheme
                             .labelSmall
                             ?.semiBold
-                            .copyWith(color: scheme.onTertiaryContainer),
+                            .copyWith(
+                          color: scheme.onSecondaryContainer, // FIXED
+                        ),
                       ),
-                      backgroundColor: scheme.tertiaryContainer,
+                      backgroundColor:
+                      scheme.secondaryContainer, // FIXED
                       side: BorderSide.none,
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                     )
@@ -106,14 +112,17 @@ class MemberTile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-
                     /// Membership Info
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.badge, size: 18, color: scheme.onSurfaceVariant),
+                            Icon(
+                              Icons.badge,
+                              size: 18,
+                              color: scheme.outline, // FIXED
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               plan,
@@ -126,17 +135,22 @@ class MemberTile extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 6),
-
                         Row(
                           children: [
-                            Icon(Icons.calendar_today_rounded, size: 18, color: scheme.onSurfaceVariant),
+                            Icon(
+                              Icons.calendar_today_rounded,
+                              size: 18,
+                              color: scheme.outline, // FIXED
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               "Expires: $expiryDate",
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
-                                  ?.copyWith(color: scheme.onSurfaceVariant),
+                                  ?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
                             ),
                           ],
                         ),
@@ -145,10 +159,13 @@ class MemberTile extends StatelessWidget {
 
                     /// Days Left Badge
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: scheme.primaryContainer,
+                        color: scheme.primary, // FIXED
                       ),
                       child: Column(
                         children: [
@@ -158,14 +175,19 @@ class MemberTile extends StatelessWidget {
                                 .textTheme
                                 .titleMedium
                                 ?.bold
-                                .copyWith(color: scheme.primary),
+                                .copyWith(
+                              color: scheme.onPrimary, // FIXED
+                            ),
                           ),
                           Text(
                             "days left",
                             style: Theme.of(context)
                                 .textTheme
                                 .labelSmall
-                                ?.copyWith(color: scheme.primary.withOpacity(0.9)),
+                                ?.copyWith(
+                              color: scheme.onPrimary
+                                  .withValues(alpha: 0.9), // FIXED
+                            ),
                           ),
                         ],
                       ),

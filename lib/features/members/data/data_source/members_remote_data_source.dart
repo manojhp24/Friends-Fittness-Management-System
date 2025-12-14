@@ -1,0 +1,7 @@
+import 'package:gym_management_system/features/members/data/models/member_model.dart';
+
+abstract class MembersRemoteDataSource {
+  Future<String> addMember(Map<String, dynamic> data);
+
+  Future<List<MemberModel>> getMembers();
+}

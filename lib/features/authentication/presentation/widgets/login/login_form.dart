@@ -1,21 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:gym_management_system/core/validators/auth_validators.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../../core/config/app_sizes.dart';
+import '../../../../../core/widgets/app_snackbar.dart';
 import '../../../../members/presentation/widgets/shared/custom_input_field.dart';
+import '../../provider/auth_provider.dart';
 
-class LoginForm extends StatelessWidget {
+class LoginForm extends ConsumerStatefulWidget {
   const LoginForm({super.key});
+
+  @override
+  ConsumerState<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends ConsumerState<LoginForm> {
+  final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>(
+      debugLabel: '_loginScreen');
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final notifier = ref.read(authNotifierProvider.notifier);
+    final authState = ref.watch(authNotifierProvider);
 
     return Form(
+      key: _loginFormKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomInputField(
+            controller: notifier.emailController,
+            validator: (email) => AuthValidators.validateEmail(email!),
             label: "Email",
             prefixIcon: Icon(
               Iconsax.sms,
@@ -25,12 +43,16 @@ class LoginForm extends StatelessWidget {
           ),
           SizedBox(height: AppSizes.spaceL(context)),
           CustomInputField(
+            controller: notifier.passwordController,
+            validator: (password) => AuthValidators.validatePassword(password!),
             label: "Password",
-            obscureText: true,
+            obscureText: authState.isPasswordVisible ? false : true,
             suffixIcon: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                ref.read(authNotifierProvider.notifier).togglePassword();
+              },
               icon: Icon(
-                Iconsax.eye_slash,
+                authState.isPasswordVisible ? Iconsax.eye : Iconsax.eye_slash,
                 color: scheme.primary,
                 size: AppSizes.inputIconSize(context),
               ),
@@ -46,7 +68,9 @@ class LoginForm extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.push('/forgot-password');
+                },
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
                   minimumSize: Size(0, 0),
@@ -67,7 +91,15 @@ class LoginForm extends StatelessWidget {
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                if (!_loginFormKey.currentState!.validate()) {
+                  AppSnackBar.error(context, "Please enter valid credentials");
+                  return;
+                }
+
+                notifier.login();
+              },
+
               style: ElevatedButton.styleFrom(
                 backgroundColor: scheme.primary,
                 foregroundColor: scheme.onPrimary,
@@ -87,53 +119,6 @@ class LoginForm extends StatelessWidget {
             ),
           ),
           SizedBox(height: AppSizes.spaceL(context)),
-          Row(
-            children: [
-              Expanded(
-                child: Divider(color: scheme.outlineVariant, thickness: 1),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  "OR",
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Divider(color: scheme.outlineVariant, thickness: 1),
-              ),
-            ],
-          ),
-          SizedBox(height: AppSizes.spaceL(context)),
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: OutlinedButton.icon(
-              onPressed: () {},
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: scheme.outline, width: 1.5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppSizes.radius(context)),
-                ),
-              ),
-              icon: Icon(
-                Iconsax.google_1,
-                color: scheme.onSurface,
-                size: AppSizes.buttonIconSize(context),
-              ),
-              label: Text(
-                "Continue with Google",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: scheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: AppSizes.sectionSpace(context) * 2),
           const SizedBox(height: 24),
         ],
       ),

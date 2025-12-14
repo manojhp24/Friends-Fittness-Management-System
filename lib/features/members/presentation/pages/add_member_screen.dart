@@ -1,81 +1,102 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gym_management_system/core/helpers/get_membership_days.dart';
+import 'package:gym_management_system/core/widgets/app_snackbar.dart';
 import 'package:gym_management_system/core/widgets/custom_app_bar.dart';
+import 'package:gym_management_system/core/widgets/loading_overlay.dart';
+import 'package:gym_management_system/features/members/domain/entities/member_entity.dart';
+import 'package:gym_management_system/features/members/presentation/provider/add_member/add_member_provider.dart';
+
 import '../../../../core/config/app_sizes.dart';
-import '../../../../core/extensions/extensions.dart';
-import '../widgets/shared/custom_input_field.dart';
+import '../widgets/forms/add_member_form.dart';
 
+class AddMemberScreen extends ConsumerWidget {
+  final MemberEntity? member;
 
-class AddMemberScreen extends StatelessWidget {
-  const AddMemberScreen({super.key});
+  AddMemberScreen({super.key, this.member});
+
+  final formKey = GlobalKey<AddMemberFormState>();
 
   @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(addMemberNotifierProvider, (prev, next) {
+      if (next.successId != null) {
+        AppSnackBar.success(
+          context,
+          member == null
+              ? "Member added successfully"
+              : "Member updated successfully",
+        );
+        if (context.mounted) {
+          Navigator.pop(context, true);
+        }
+      }
+
+      if (next.error != null) {
+        AppSnackBar.error(context, next.error!);
+      }
+    });
+
+    final state = ref.watch(addMemberNotifierProvider);
 
     return Scaffold(
-      appBar: const CustomAppBar(title: "Add Member",titleSpacing: 0,),
-
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(AppSizes.screenPadding(context)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            /// First + Last Name Row
-            Row(
-              children: [
-                Expanded(child: CustomInputField(label: "First Name")),
-                SizedBox(width: AppSizes.spaceM(context)),
-                Expanded(child: CustomInputField(label: "Last Name")),
-              ],
+      appBar: CustomAppBar(
+        title: member == null ? "Add Member" : "Update Member",
+        titleSpacing: 0,
+      ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: EdgeInsets.all(AppSizes.screenPadding(context)),
+            child: AddMemberForm(
+              key: formKey,
+              member: member,
             ),
+          ),
+          if (state.isLoading)
+            const LoadingOverlay(subtitle: "Saving member..."),
+        ],
+      ),
+      bottomNavigationBar: SafeArea(
+        minimum: EdgeInsets.all(AppSizes.spaceM(context)),
+        child: ElevatedButton(
+          onPressed: () {
+            final form = formKey.currentState!;
 
-            SizedBox(height: AppSizes.spaceL(context)),
+            if (!form.validate()) {
+              AppSnackBar.error(
+                context,
+                "Please fill the form correctly",
+              );
+              return;
+            }
 
-            CustomInputField(
-              label: "Phone Number",
-              keyboardType: TextInputType.phone,
-            ),
+            final days = getMembershipDays(form.membership!);
 
-            SizedBox(height: AppSizes.spaceL(context)),
+            final memberEntity = MemberEntity(
+              id: member?.id ?? "",
+              fullName: form.fullNameController.text,
+              mobileNumber: form.phoneNumberController.text,
+              aadhaarNumber: form.aadhaarNumberController.text,
+              membership: form.membership!,
+              fee: form.feesController.text,
+              joinDate: form.joinDate!,
+              expiryDate:
+              form.joinDate!.add(Duration(days: days)),
+              address: form.addressController.text,
+              isActive: form.isActive,
+              email: form.emailController.text,
+            );
 
-            CustomInputField(
-              label: "Email",
-              keyboardType: TextInputType.emailAddress,
-            ),
-
-            SizedBox(height: AppSizes.spaceL(context)),
-
-            CustomInputField(
-              label: "Aadhaar Number",
-              keyboardType: TextInputType.number,
-            ),
-
-            SizedBox(height: AppSizes.spaceL(context)),
-
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: () {},
-                style: FilledButton.styleFrom(
-                  backgroundColor: scheme.primaryContainer,
-                  padding: EdgeInsets.symmetric(vertical: AppSizes.spaceM(context)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppSizes.radius(context)),
-                  ),
-                ),
-                child: Text(
-                  "Save Member",
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleSmall
-                      ?.responsive
-                      .bold
-                      .copyWith(color: scheme.onPrimaryContainer),
-                ),
-              ),
-            ),
-          ],
+            if (member == null) {
+              ref
+                  .read(addMemberNotifierProvider.notifier)
+                  .addMember(memberEntity);
+            } 
+          },
+          child: Text(
+            member == null ? "Save Member" : "Update Member",
+          ),
         ),
       ),
     );
