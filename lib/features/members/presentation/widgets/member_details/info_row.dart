@@ -28,9 +28,9 @@ class InfoRow extends StatelessWidget {
             flex: 3,
             child: Text(
               info,
-              style: textTheme.bodySmall?.copyWith(
+              style: textTheme.labelMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
-              ),
+              ), // FIXED typography
             ),
           ),
 
@@ -48,7 +48,7 @@ class InfoRow extends StatelessWidget {
                     style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                       color: scheme.onSurface,
-                    ),
+                    ), // FIXED typography
                   ),
                 ),
                 if (isCopyEnabled) ...[
@@ -57,9 +57,9 @@ class InfoRow extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                     onTap: () {
                       Clipboard.setData(ClipboardData(text: value));
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text("$info Copied")));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("$info Copied")),
+                      );
                     },
                     child: Icon(
                       Icons.copy_rounded,
@@ -76,3 +76,4 @@ class InfoRow extends StatelessWidget {
     );
   }
 }
+

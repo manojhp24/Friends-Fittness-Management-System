@@ -5,8 +5,8 @@ import 'package:gym_management_system/features/authentication/presentation/pages
 import 'package:gym_management_system/features/authentication/presentation/pages/login_screen.dart';
 import 'package:gym_management_system/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:gym_management_system/features/dashboard/presentation/pages/main_screen.dart';
-import 'package:gym_management_system/features/members/data/models/member_model.dart';
 import 'package:gym_management_system/features/members/domain/entities/member_entity.dart';
+import 'package:gym_management_system/features/members/presentation/pages/add_member_screen.dart';
 import 'package:gym_management_system/features/members/presentation/pages/members_screen.dart';
 
 import '../../features/authentication/presentation/provider/auth_provider.dart';
@@ -65,6 +65,12 @@ final routerProvider = Provider<GoRouter>((ref) {
             final member = state.extra as MemberEntity;
             return MemberDetailScreen(member: member,);
           }),
+      GoRoute(path: "/update-member", builder: (context, state) {
+        final member = state.extra as MemberEntity;
+        return AddMemberScreen(member: member,);
+      }),
+      GoRoute(
+          path: "/add-member", builder: (context, state) => AddMemberScreen()),
     ],
   );
 });

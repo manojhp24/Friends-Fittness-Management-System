@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:gym_management_system/core/config/app_sizes.dart';
 import 'package:gym_management_system/core/widgets/custom_app_bar.dart';
 import 'package:gym_management_system/features/members/domain/entities/member_entity.dart';
@@ -28,7 +29,10 @@ class MemberDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         title: "Member Details",
-        actions: [IconButton(onPressed: () {}, icon: Icon(Iconsax.edit))],
+        actions: [IconButton(onPressed: () {
+          context.push('/update-member', extra: member);
+        }, icon: Icon(Iconsax.edit))
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -184,8 +188,16 @@ class MemberDetailScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: scheme.primary,
+                      side: BorderSide(color: scheme.primary),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
                     onPressed: () {},
-                    child: Text("Renew membership"),
+                    child: const Text("Renew membership"),
                   ),
                 ),
 
@@ -195,12 +207,8 @@ class MemberDetailScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isDarkMode
-                          ? scheme.errorContainer
-                          : scheme.error,
-                      foregroundColor: isDarkMode
-                          ? scheme.onErrorContainer
-                          : scheme.onError,
+                      backgroundColor: scheme.error,
+                      foregroundColor: scheme.onError,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -210,6 +218,7 @@ class MemberDetailScreen extends StatelessWidget {
                     child: const Text("Delete Member"),
                   ),
                 ),
+
               ],
             ),
           ),

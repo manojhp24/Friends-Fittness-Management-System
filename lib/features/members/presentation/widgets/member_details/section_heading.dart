@@ -30,7 +30,7 @@ class SectionHeading extends StatelessWidget {
           SizedBox(width: AppSizes.spaceS(context)),
           Text(
             title,
-            style: textTheme.titleSmall?.copyWith(
+            style: textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
               color: scheme.onSurface,
             ),
@@ -40,3 +40,4 @@ class SectionHeading extends StatelessWidget {
     );
   }
 }
+

@@ -16,13 +16,13 @@ class DetailsCard extends StatelessWidget {
     return Card(
       elevation: 0,
       margin: EdgeInsets.zero,
-      color: scheme.surfaceContainerLow,
+      color: scheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(
           AppSizes.radius(context),
         ),
         side: BorderSide(
-          color: scheme.outlineVariant,
+          color: scheme.outlineVariant.withValues(alpha: 0.7),
           width: 1,
         ),
       ),

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gym_management_system/core/config/app_sizes.dart';
 import 'package:gym_management_system/core/helpers/calculate_days_left.dart';
-import 'package:gym_management_system/features/members/presentation/pages/add_member_screen.dart';
 import 'package:gym_management_system/features/members/presentation/provider/member_list/member_list_provider.dart';
 import 'package:intl/intl.dart';
 
@@ -105,10 +104,7 @@ class MembersScreen extends ConsumerWidget {
         backgroundColor: scheme.primaryContainer,
         child: Icon(Icons.add, color: scheme.onPrimaryContainer),
         onPressed: () async {
-          final added = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddMemberScreen()),
-          );
+          final added = await context.push('/add-member');
 
           if (added == true) {
             ref.read(memberListNotifierProvider.notifier).getMembers();

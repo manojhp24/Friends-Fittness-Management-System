@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:gym_management_system/core/validators/member_validators.dart';
+import 'package:gym_management_system/features/members/domain/entities/member_entity.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../core/config/app_sizes.dart';
 import '../shared/custom_input_field.dart';
 
 class AddMemberForm extends StatefulWidget {
-  const AddMemberForm({super.key});
+  final MemberEntity? member;
+
+  const AddMemberForm({super.key, this.member});
 
   @override
   State<AddMemberForm> createState() => AddMemberFormState();
 }
 
 class AddMemberFormState extends State<AddMemberForm> {
+  final _formKey = GlobalKey<FormState>();
+
   final fullNameController = TextEditingController();
   final phoneNumberController = TextEditingController();
   final emailController = TextEditingController();
@@ -20,41 +26,47 @@ class AddMemberFormState extends State<AddMemberForm> {
   final addressController = TextEditingController();
   final joinDateController = TextEditingController();
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-
   String? membership;
   DateTime? joinDate;
   bool isActive = true;
 
   bool validate() => _formKey.currentState?.validate() ?? false;
 
-  void resetForm() {
-    fullNameController.clear();
-    phoneNumberController.clear();
-    emailController.clear();
-    aadhaarNumberController.clear();
-    feesController.clear();
-    addressController.clear();
-
-    joinDateController.clear();
-    joinDate = null;
-
-    membership = null;
-
-    setState(() {});
-  }
 
   final Map<String, String> membershipFee = {
     '1 month': '999',
     '3 months': '2699',
     '6 months': '4999',
-    '1 year': '7499'
+    '1 year': '7499',
   };
+
+  bool get isUpdate => widget.member != null;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final member = widget.member;
+    if (member != null) {
+      fullNameController.text = member.fullName;
+      phoneNumberController.text = member.mobileNumber;
+      emailController.text = member.email;
+      aadhaarNumberController.text = member.aadhaarNumber;
+      feesController.text = member.fee;
+      addressController.text = member.address;
+
+      membership = member.membership;
+      joinDate = member.joinDate;
+
+      joinDateController.text =
+          DateFormat('dd MMM yyyy').format(member.joinDate);
+
+      isActive = member.isActive;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Form(
       key: _formKey,
       child: Column(
@@ -63,37 +75,36 @@ class AddMemberFormState extends State<AddMemberForm> {
           CustomInputField(
             label: "Full Name",
             controller: fullNameController,
-            validator: (value) =>
-                MemberValidators.requiredField(value, fieldName: "Full Name"),
+            validator: (v) =>
+                MemberValidators.requiredField(v, fieldName: "Full Name"),
           ),
 
           SizedBox(height: AppSizes.spaceL(context)),
 
           CustomInputField(
-            validator: (value) => MemberValidators.phone(value),
             controller: phoneNumberController,
             label: "Phone Number",
             keyboardType: TextInputType.phone,
-            maxLines: 1,
             maxLength: 13,
+            validator: MemberValidators.phone,
           ),
 
           SizedBox(height: AppSizes.spaceL(context)),
 
           CustomInputField(
-            validator: (value) => MemberValidators.email(value),
             controller: emailController,
             label: "Email",
             keyboardType: TextInputType.emailAddress,
+            validator: MemberValidators.email,
           ),
 
           SizedBox(height: AppSizes.spaceL(context)),
 
           CustomInputField(
-            validator: (value) => MemberValidators.aadhaar(value),
             controller: aadhaarNumberController,
             label: "Aadhaar Number",
             keyboardType: TextInputType.number,
+            validator: MemberValidators.aadhaar,
           ),
 
           SizedBox(height: AppSizes.spaceL(context)),
@@ -101,25 +112,36 @@ class AddMemberFormState extends State<AddMemberForm> {
           Row(
             children: [
               Expanded(
-                child: DropdownButtonFormField(
-                  decoration: InputDecoration(labelText: "Membership"),
-                  items: ["1 month", "3 months", "6 months", "1 year"].map((p) {
-                    return DropdownMenuItem(value: p, child: Text(p));
+                child: DropdownButtonFormField<String>(
+                  initialValue: membership,
+                  decoration:
+                  const InputDecoration(labelText: "Membership"),
+                  items: membershipFee.keys.map((plan) {
+                    return DropdownMenuItem(
+                      value: plan,
+                      child: Text(plan),
+                    );
                   }).toList(),
                   onChanged: (value) {
-                    membership = value;
-                    feesController.text = membershipFee[value] ?? "";
+                    setState(() {
+                      membership = value;
+                      feesController.text =
+                          membershipFee[value] ?? '';
+                    });
                   },
+                  validator: (v) =>
+                  v == null ? "Select membership" : null,
                 ),
               ),
+
               SizedBox(width: AppSizes.spaceM(context)),
+
               Expanded(
                 child: CustomInputField(
                   controller: feesController,
-                  validator: (value) => MemberValidators.fee(value),
                   label: "Fee",
-                  keyboardType: TextInputType.numberWithOptions(),
                   readOnly: true,
+                  validator: MemberValidators.fee,
                 ),
               ),
             ],
@@ -136,39 +158,34 @@ class AddMemberFormState extends State<AddMemberForm> {
                 context: context,
                 firstDate: DateTime(2000),
                 lastDate: DateTime(2100),
-                initialDate: DateTime.now(),
+                initialDate: joinDate ?? DateTime.now(),
               );
               if (pickedDate != null) {
-                joinDate = pickedDate;
-                joinDateController.text =
-                    "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                setState(() {
+                  joinDate = pickedDate;
+                  joinDateController.text =
+                      DateFormat('dd MMM yyyy').format(pickedDate);
+                });
               }
             },
+            validator: (_) =>
+            joinDate == null ? "Select join date" : null,
           ),
+
           SizedBox(height: AppSizes.spaceM(context)),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Active Member",
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .bodyMedium,
-                ),
-                Switch(
-                  value: isActive,
-                  onChanged: (value) {
-                    setState(() {
-                      isActive = value;
-                    });
-                  },
-                ),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Active Member",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              Switch(
+                value: isActive,
+                onChanged: (v) => setState(() => isActive = v),
+              ),
+            ],
           ),
 
           SizedBox(height: AppSizes.spaceM(context)),
@@ -176,11 +193,11 @@ class AddMemberFormState extends State<AddMemberForm> {
           CustomInputField(
             controller: addressController,
             label: "Address",
-            maxLines: 5,
+            maxLines: 4,
             alignLabelWithHint: true,
           ),
-          SizedBox(height: AppSizes.spaceL(context)),
 
+          SizedBox(height: AppSizes.spaceL(context)),
         ],
       ),
     );

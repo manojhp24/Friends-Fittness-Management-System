@@ -11,7 +11,9 @@ import '../../../../core/config/app_sizes.dart';
 import '../widgets/forms/add_member_form.dart';
 
 class AddMemberScreen extends ConsumerWidget {
-  AddMemberScreen({super.key});
+  final MemberEntity? member;
+
+  AddMemberScreen({super.key, this.member});
 
   final formKey = GlobalKey<AddMemberFormState>();
 
@@ -35,12 +37,14 @@ class AddMemberScreen extends ConsumerWidget {
     final state = ref.watch(addMemberNotifierProvider);
 
     return Scaffold(
-      appBar: const CustomAppBar(title: "Add Member",titleSpacing: 0,),
+      appBar: CustomAppBar(
+        title: member == null ? "Add Member" : "Update member",
+        titleSpacing: 0,),
       body: Stack(
         children: [
           SingleChildScrollView(
             padding: EdgeInsets.all(AppSizes.screenPadding(context)),
-            child: AddMemberForm(key: formKey),
+            child: AddMemberForm(key: formKey, member: member,),
           ),
 
           if (state.isLoading)
@@ -75,7 +79,7 @@ class AddMemberScreen extends ConsumerWidget {
 
             ref.read(addMemberNotifierProvider.notifier).addMember(member);
           },
-          child: const Text("Save Member"),
+          child: Text(member == null ? "Save Member" : "Update Member"),
         ),
       ),
 

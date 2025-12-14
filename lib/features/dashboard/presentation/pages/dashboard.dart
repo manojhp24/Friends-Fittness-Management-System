@@ -23,7 +23,6 @@ class _DashboardState extends ConsumerState<Dashboard> {
     final textTheme = Theme
         .of(context)
         .textTheme;
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -46,7 +45,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
 
             SizedBox(height: AppSizes.spaceM(context)),
 
-            StatsGrid(textTheme: textTheme, scheme: scheme,isDark: isDarkMode,),
+            StatsGrid(textTheme: textTheme, scheme: scheme),
             SizedBox(height: AppSizes.spaceM(context)),
 
             Text(
