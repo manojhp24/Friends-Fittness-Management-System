@@ -6,6 +6,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final bool showBack;
   final double? titleSpacing;
+  final PreferredSizeWidget? bottom; // 👈 added
 
   const CustomAppBar({
     super.key,
@@ -13,6 +14,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.showBack = true,
     this.titleSpacing = 16.0,
+    this.bottom, // 👈 added
   });
 
   @override
@@ -51,9 +53,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         if (actions != null) ...actions!,
         SizedBox(width: AppSizes.spaceS(context)),
       ],
+
+      bottom: bottom, // 👈 added
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize =>
+      Size.fromHeight(kToolbarHeight + (bottom?.preferredSize.height ?? 0));
 }
