@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../../../core/config/app_sizes.dart';
 import '../../../../../core/extensions/extensions.dart';
 
@@ -22,9 +23,25 @@ class MemberTile extends StatelessWidget {
     required this.onTap,
   });
 
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final days = int.parse(daysLeft);
+
+    String topText;
+    String bottomText;
+
+    if (days < 0) {
+      topText = "Expired";
+      bottomText = "${days.abs()} days ago";
+    } else if (days == 0) {
+      topText = "Today";
+      bottomText = "Expires";
+    } else {
+      topText = daysLeft.toString();
+      bottomText = "days left";
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -170,7 +187,7 @@ class MemberTile extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            daysLeft,
+                            topText,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -180,7 +197,7 @@ class MemberTile extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "days left",
+                            bottomText,
                             style: Theme.of(context)
                                 .textTheme
                                 .labelSmall

@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gym_management_system/core/utils/data_state.dart';
 import 'package:gym_management_system/features/members/data/data_source/members_remote_data_source.dart';
 import 'package:gym_management_system/features/members/data/models/member_model.dart';
+import 'package:gym_management_system/features/members/data/models/renewal_model.dart';
 import 'package:gym_management_system/features/members/domain/entities/member_entity.dart';
+import 'package:gym_management_system/features/members/domain/entities/member_renewal_entity.dart';
 import 'package:gym_management_system/features/members/domain/repository/member_repository.dart';
 
 import '../../../../core/exception/firestore_exception_mapper.dart';
@@ -42,6 +44,42 @@ class MemberRepositoryImpl extends MemberRepository {
   Future<DataState<void>> deleteMember(String memberId) async {
     try {
       await _membersRemoteDataSource.deleteMember(memberId);
+      return DataSuccess(null);
+    } on FirebaseException catch (e) {
+      return DataFailed(FirestoreExceptionsMapper.map(e.code));
+    } catch (e) {
+      return DataFailed(e.toString());
+    }
+  }
+
+  @override
+  Future<DataState<void>> updateMember(MemberEntity member) async {
+    try {
+      final memberModel = MemberModel.fromEntity(member);
+      await _membersRemoteDataSource.updateMember(
+          member.id, memberModel.toMap());
+      return DataSuccess(null);
+    } on FirebaseException catch (e) {
+      return DataFailed(FirestoreExceptionsMapper.map(e.code));
+    } catch (e) {
+      return DataFailed(e.toString());
+    }
+  }
+
+  @override
+  Future<DataState<void>> renewMember(MemberEntity updateMember,
+      MemberRenewalEntity memberRenewal) async {
+    try {
+      final memberModel = MemberModel.fromEntity(updateMember);
+
+      final memberRenewalModel = RenewalModel.fromEntity(memberRenewal);
+
+      await _membersRemoteDataSource.addRenewal(
+          updateMember.id, memberRenewalModel.toMap());
+
+      await _membersRemoteDataSource.updateMember(
+          updateMember.id, memberModel.toMap());
+
       return DataSuccess(null);
     } on FirebaseException catch (e) {
       return DataFailed(FirestoreExceptionsMapper.map(e.code));

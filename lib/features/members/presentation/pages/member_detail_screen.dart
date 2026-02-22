@@ -6,6 +6,7 @@ import 'package:gym_management_system/core/config/app_sizes.dart';
 import 'package:gym_management_system/core/widgets/custom_app_bar.dart';
 import 'package:gym_management_system/features/members/domain/entities/member_entity.dart';
 import 'package:gym_management_system/features/members/presentation/provider/delete_member/delete_member_provider.dart';
+import 'package:gym_management_system/features/members/presentation/provider/member_list/member_list_provider.dart';
 import 'package:gym_management_system/features/members/presentation/widgets/member_details/info_row.dart';
 import 'package:gym_management_system/features/members/presentation/widgets/shared/comfirm_dialog.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -35,9 +36,15 @@ class MemberDetailScreen extends ConsumerWidget {
         AppSnackBar.error(context, next.error!);
       }
     });
-    final scheme = Theme.of(context).colorScheme;
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final textTheme = Theme.of(context).textTheme;
+    final scheme = Theme
+        .of(context)
+        .colorScheme;
+    final isDarkMode = Theme
+        .of(context)
+        .brightness == Brightness.dark;
+    final textTheme = Theme
+        .of(context)
+        .textTheme;
     final formatedJoinDate = DateFormat('MMM dd, yyyy').format(member.joinDate);
     final formatedExpiryDate = DateFormat(
       'MMM dd, yyyy',
@@ -46,9 +53,13 @@ class MemberDetailScreen extends ConsumerWidget {
     return Scaffold(
       appBar: CustomAppBar(
         title: "Member Details",
-        actions: [IconButton(onPressed: () {
-          context.push('/update-member', extra: member);
-        }, icon: Icon(Iconsax.edit))
+        actions: [
+          IconButton(onPressed: () async {
+            final updated = await context.push('/update-member', extra: member);
+            if (updated == true) {
+              ref.read(memberListNotifierProvider.notifier).getMembers();
+            }
+          }, icon: Icon(Iconsax.edit),),
         ],
       ),
       body: SafeArea(
@@ -110,7 +121,9 @@ class MemberDetailScreen extends ConsumerWidget {
                                       Clipboard.setData(
                                         ClipboardData(text: member.id),
                                       );
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger
+                                          .of(context)
+                                          .showSnackBar(
                                         const SnackBar(
                                           content: Text("Member ID copied"),
                                           duration: Duration(seconds: 1),
@@ -164,6 +177,30 @@ class MemberDetailScreen extends ConsumerWidget {
                 ),
 
                 SectionHeading(
+                  title: "Payment Info",
+                  icon: Iconsax.money,
+                ),
+
+                DetailsCard(
+                  rows: [
+                    InfoRow(
+                        info: 'Payment status', value: member.paymentStatus),
+                    Divider(),
+                    InfoRow(
+                        info: "Paid amount", value: "${member.paidAmount} Rs"),
+
+                    if (int.parse(member.balance) > 0) ...[
+                      Divider(),
+                      InfoRow(info: "Balance",
+                        value: "${member.balance} Rs",
+                        valueColor: scheme.error,),
+                    ], // show only if > 0
+                  ],
+                ),
+
+
+
+                SectionHeading(
                   title: "Contact Information",
                   icon: Iconsax.call,
                 ),
@@ -176,13 +213,10 @@ class MemberDetailScreen extends ConsumerWidget {
                       isCopyEnabled: true,
                     ),
                     Divider(),
-                    InfoRow(
-                      info: "E-mail",
-                      value: member.email,
-                      isCopyEnabled: true,
-                    ),
-                    Divider(),
-                    InfoRow(info: "Address", value: member.address),
+
+                    InfoRow(info: "Address", value: member.address
+                        .trim()
+                        .isEmpty ? "--" : member.address),
                   ],
                 ),
 
@@ -195,7 +229,9 @@ class MemberDetailScreen extends ConsumerWidget {
                   rows: [
                     InfoRow(
                       info: "Aadhaar number",
-                      value: member.aadhaarNumber,
+                      value: member.aadhaarNumber
+                          .trim()
+                          .isEmpty ? "--" : member.aadhaarNumber,
                     ),
                   ],
                 ),
@@ -214,7 +250,9 @@ class MemberDetailScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          context.push('/renew-member',extra: member);
+                        },
                         child: const Text("Renew membership"),
                       ),
                     ),

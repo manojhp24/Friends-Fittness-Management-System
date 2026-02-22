@@ -8,7 +8,6 @@ import '../shared/custom_input_field.dart';
 
 class AddMemberForm extends StatefulWidget {
   final MemberEntity? member;
-
   const AddMemberForm({super.key, this.member});
 
   @override
@@ -20,18 +19,18 @@ class AddMemberFormState extends State<AddMemberForm> {
 
   final fullNameController = TextEditingController();
   final phoneNumberController = TextEditingController();
-  final emailController = TextEditingController();
   final aadhaarNumberController = TextEditingController();
   final feesController = TextEditingController();
+  final paidAmountController = TextEditingController();
+  final balanceController = TextEditingController();
   final addressController = TextEditingController();
   final joinDateController = TextEditingController();
 
   String? membership;
   DateTime? joinDate;
-  bool isActive = true;
+  String paymentStatus = "Paid"; // Paid / Partial / Unpaid
 
   bool validate() => _formKey.currentState?.validate() ?? false;
-
 
   final Map<String, String> membershipFee = {
     '1 month': '999',
@@ -39,8 +38,6 @@ class AddMemberFormState extends State<AddMemberForm> {
     '6 months': '4999',
     '1 year': '7499',
   };
-
-  bool get isUpdate => widget.member != null;
 
   @override
   void initState() {
@@ -50,18 +47,17 @@ class AddMemberFormState extends State<AddMemberForm> {
     if (member != null) {
       fullNameController.text = member.fullName;
       phoneNumberController.text = member.mobileNumber;
-      emailController.text = member.email;
       aadhaarNumberController.text = member.aadhaarNumber;
       feesController.text = member.fee;
       addressController.text = member.address;
 
       membership = member.membership;
       joinDate = member.joinDate;
+      joinDateController.text = DateFormat('dd MMM yyyy').format(member.joinDate);
 
-      joinDateController.text =
-          DateFormat('dd MMM yyyy').format(member.joinDate);
-
-      isActive = member.isActive;
+      paymentStatus = member.paymentStatus ?? "Paid";
+      paidAmountController.text = member.paidAmount ?? "";
+      balanceController.text = member.balance ?? "0";
     }
   }
 
@@ -72,11 +68,11 @@ class AddMemberFormState extends State<AddMemberForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           CustomInputField(
             label: "Full Name",
             controller: fullNameController,
-            validator: (v) =>
-                MemberValidators.requiredField(v, fieldName: "Full Name"),
+            validator: (v) => MemberValidators.requiredField(v, fieldName: "Full Name"),
           ),
 
           SizedBox(height: AppSizes.spaceL(context)),
@@ -92,19 +88,9 @@ class AddMemberFormState extends State<AddMemberForm> {
           SizedBox(height: AppSizes.spaceL(context)),
 
           CustomInputField(
-            controller: emailController,
-            label: "Email",
-            keyboardType: TextInputType.emailAddress,
-            validator: MemberValidators.email,
-          ),
-
-          SizedBox(height: AppSizes.spaceL(context)),
-
-          CustomInputField(
             controller: aadhaarNumberController,
             label: "Aadhaar Number",
             keyboardType: TextInputType.number,
-            validator: MemberValidators.aadhaar,
           ),
 
           SizedBox(height: AppSizes.spaceL(context)),
@@ -114,8 +100,7 @@ class AddMemberFormState extends State<AddMemberForm> {
               Expanded(
                 child: DropdownButtonFormField<String>(
                   initialValue: membership,
-                  decoration:
-                  const InputDecoration(labelText: "Membership"),
+                  decoration: const InputDecoration(labelText: "Membership"),
                   items: membershipFee.keys.map((plan) {
                     return DropdownMenuItem(
                       value: plan,
@@ -125,12 +110,14 @@ class AddMemberFormState extends State<AddMemberForm> {
                   onChanged: (value) {
                     setState(() {
                       membership = value;
-                      feesController.text =
-                          membershipFee[value] ?? '';
+                      feesController.text = membershipFee[value]!;
+                      if (paymentStatus == "Paid") {
+                        paidAmountController.text = feesController.text;
+                        balanceController.text = "0";
+                      }
                     });
                   },
-                  validator: (v) =>
-                  v == null ? "Select membership" : null,
+                  validator: (v) => v == null ? "Select membership" : null,
                 ),
               ),
 
@@ -149,46 +136,79 @@ class AddMemberFormState extends State<AddMemberForm> {
 
           SizedBox(height: AppSizes.spaceL(context)),
 
+          DropdownButtonFormField<String>(
+            initialValue: paymentStatus,
+            decoration: const InputDecoration(labelText: "Payment Status"),
+            items: ["Paid", "Partial", "Unpaid"].map((e) {
+              return DropdownMenuItem(value: e, child: Text(e));
+            }).toList(),
+            onChanged: (v) {
+              setState(() {
+                paymentStatus = v!;
+                if (paymentStatus == "Paid") {
+                  paidAmountController.text = feesController.text;
+                  balanceController.text = "0";
+                } else {
+                  paidAmountController.clear();
+                  balanceController.clear();
+                }
+              });
+            },
+          ),
+
+          if (paymentStatus != "Paid") ...[
+            SizedBox(height: AppSizes.spaceM(context)),
+
+            CustomInputField(
+              label: "Paid Amount",
+              controller: paidAmountController,
+              keyboardType: TextInputType.number,
+              onChanged: (val) {
+                final fee = int.tryParse(feesController.text) ?? 0;
+                final paid = int.tryParse(val) ?? 0;
+                balanceController.text = (fee - paid).toString();
+              },
+              validator: (val) {
+                if (paymentStatus == "Partial" && (val == null || val.isEmpty)) {
+                  return "Enter paid amount";
+                }
+                return null;
+              },
+            ),
+
+            SizedBox(height: AppSizes.spaceM(context)),
+
+            CustomInputField(
+              label: "Remaining Balance",
+              controller: balanceController,
+              readOnly: true,
+            ),
+          ],
+
+          SizedBox(height: AppSizes.spaceL(context)),
+
           CustomInputField(
             controller: joinDateController,
             label: "Join Date",
             readOnly: true,
             onTap: () async {
-              final pickedDate = await showDatePicker(
+              final picked = await showDatePicker(
                 context: context,
+                initialDate: joinDate ?? DateTime.now(),
                 firstDate: DateTime(2000),
                 lastDate: DateTime(2100),
-                initialDate: joinDate ?? DateTime.now(),
               );
-              if (pickedDate != null) {
+              if (picked != null) {
                 setState(() {
-                  joinDate = pickedDate;
-                  joinDateController.text =
-                      DateFormat('dd MMM yyyy').format(pickedDate);
+                  joinDate = picked;
+                  joinDateController.text = DateFormat('dd MMM yyyy').format(picked);
                 });
               }
             },
-            validator: (_) =>
-            joinDate == null ? "Select join date" : null,
+            validator: (_) => joinDate == null ? "Select join date" : null,
           ),
 
-          SizedBox(height: AppSizes.spaceM(context)),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Active Member",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              Switch(
-                value: isActive,
-                onChanged: (v) => setState(() => isActive = v),
-              ),
-            ],
-          ),
-
-          SizedBox(height: AppSizes.spaceM(context)),
+          SizedBox(height: AppSizes.spaceL(context)),
 
           CustomInputField(
             controller: addressController,

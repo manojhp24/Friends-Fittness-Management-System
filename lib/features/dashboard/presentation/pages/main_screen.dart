@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gym_management_system/core/helpers/theme_helpers.dart';
 import 'package:gym_management_system/features/members/presentation/pages/members_screen.dart';
+import 'package:gym_management_system/features/members/presentation/settings_screen.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
+import '../../../attendance/presentation/pages/attendance_screen.dart';
 import '../provider/main_nav_provider.dart';
 import 'dashboard.dart';
 
@@ -11,8 +13,8 @@ import 'dashboard.dart';
 final screens = [
   Dashboard(),
   MembersScreen(),
-  Center(child: Text("Attendance Screen")),
-  Center(child: Text("Settings Screen")),
+  AttendanceScreen(),
+  SettingsScreen(),
 ];
 
 class MainScreen extends ConsumerWidget {
@@ -27,7 +29,6 @@ class MainScreen extends ConsumerWidget {
     return Scaffold(
       body: screens[navState.index],
       bottomNavigationBar: NavigationBar(
-        backgroundColor: scheme.surface,
         indicatorColor: scheme.primaryContainer,
         selectedIndex: navState.index,
         onDestinationSelected: notifier.changePage,

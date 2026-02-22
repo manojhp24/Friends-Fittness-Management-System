@@ -7,9 +7,13 @@ import 'package:gym_management_system/features/members/domain/repository/member_
 import 'package:gym_management_system/features/members/domain/usecases/add_member_use_case.dart';
 import 'package:gym_management_system/features/members/domain/usecases/delete_member_use_case.dart';
 import 'package:gym_management_system/features/members/domain/usecases/get_member_use_case.dart';
+import 'package:gym_management_system/features/members/domain/usecases/renew_member_usecase.dart';
+import 'package:gym_management_system/features/members/domain/usecases/update_member_use_case.dart';
 import 'package:gym_management_system/features/members/presentation/provider/add_member/add_member_notifier.dart';
 import 'package:gym_management_system/features/members/presentation/provider/delete_member/delete_member_notifier.dart';
 import 'package:gym_management_system/features/members/presentation/provider/member_list/member_list_notifier.dart';
+import 'package:gym_management_system/features/members/presentation/provider/renew_member/renew_member_notifier.dart';
+import 'package:gym_management_system/features/members/presentation/provider/update_member/update_member_notifier.dart';
 
 void registerMemberDependencies() {
   sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
@@ -18,14 +22,20 @@ void registerMemberDependencies() {
     () => FirebaseMembersRemoteDataSourceImpl(sl()),
   );
 
+
   sl.registerLazySingleton<MemberRepository>(() => MemberRepositoryImpl(sl()));
 
   sl.registerLazySingleton<AddMemberUseCase>(() => AddMemberUseCase(sl()));
   sl.registerLazySingleton<GetMembersUseCase>(() => GetMembersUseCase(sl()));
   sl.registerLazySingleton<DeleteMemberUseCase>(() =>
       DeleteMemberUseCase(sl()));
+  sl.registerLazySingleton<UpdateMemberUseCase>(() =>
+      UpdateMemberUseCase(sl()));
+  sl.registerLazySingleton<RenewMemberUsecase>(() => RenewMemberUsecase(sl()));
 
   sl.registerFactory<AddMemberNotifier>(() => AddMemberNotifier(sl()));
   sl.registerFactory<MemberListNotifier>(() => MemberListNotifier(sl()));
   sl.registerFactory<DeleteMemberNotifier>(()=>DeleteMemberNotifier(sl()));
+  sl.registerFactory<UpdateMemberNotifier>(() => UpdateMemberNotifier(sl()));
+  sl.registerFactory<RenewMemberNotifier>(() => RenewMemberNotifier(sl()));
 }

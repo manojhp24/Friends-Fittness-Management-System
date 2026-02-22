@@ -26,7 +26,7 @@ class StatsGrid extends ConsumerWidget {
       physics: const NeverScrollableScrollPhysics(),
       crossAxisSpacing: AppSizes.spaceM(context),
       mainAxisSpacing: AppSizes.spaceM(context),
-      childAspectRatio: AppSizes.responsiveAspectRatio(context) * 1.1,
+      childAspectRatio: 1,
       children: [
         StatsCard(
           title: "Total Members",

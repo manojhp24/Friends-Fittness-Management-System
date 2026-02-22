@@ -34,6 +34,7 @@ class StatsCard extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             // Accent strip + icon
             Container(
@@ -48,9 +49,7 @@ class StatsCard extends StatelessWidget {
                 size: 22,
               ),
             ),
-
-            const Spacer(),
-
+            const SizedBox(height: 12),
             Text(
               value,
               style: Theme

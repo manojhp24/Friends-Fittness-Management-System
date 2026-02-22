@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:label="gym_management_system"
+        android:label="FriendsFitness"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -70,13 +70,16 @@ class AppSizes {
     return (28 * scale).clamp(24, 36);
   }
 
-  static double responsiveAspectRatio(BuildContext context, {double heightFactor = 0.22}) {
-    final width = screenWidth(context);
-    final tileWidth = (width / 2) - (screenWidth(context) * 0.04);
+  static double responsiveAspectRatio(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
 
-    final tileHeight = screenHeight(context) * heightFactor;
-
-    return tileWidth / tileHeight;
+    if (width < 600) {
+      return 0.85;
+    } else if (width < 1000) {
+      return 1.0;
+    } else {
+      return 1.2;
+    }
   }
 
 }

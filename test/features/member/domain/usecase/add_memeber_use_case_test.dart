@@ -21,8 +21,10 @@ void main() {
     joinDate: DateTime.now(),
     address: "KRS",
     isActive: true,
-    email: 'manojhp@gmail.com',
     expiryDate: DateTime.now(),
+    paymentStatus: '',
+    paidAmount: '',
+    balance: '',
   );
 
   setUp(() {

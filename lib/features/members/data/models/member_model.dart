@@ -10,47 +10,56 @@ class MemberModel extends MemberEntity {
     required super.membership,
     required super.fee,
     required super.joinDate,
+    required super.expiryDate,
     required super.address,
-    required super.isActive, required super.email, required super.expiryDate,
+    required super.isActive,
+
+    // new fields
+    required super.paymentStatus,
+    required super.paidAmount,
+    required super.balance,
   });
 
-  factory MemberModel.formFirestore(
-    DocumentSnapshot<Map<String, dynamic>> doc,
-  ) {
+  factory MemberModel.formFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data() ?? {};
     return MemberModel(
       id: doc.id,
       fullName: data['fullName'] ?? '',
-      mobileNumber: data["mobileNumber"] ?? '',
+      mobileNumber: data['mobileNumber'] ?? '',
       aadhaarNumber: data['aadhaarNumber'] ?? '',
       membership: data['membership'] ?? '',
       fee: data['fee'] ?? '',
       joinDate: data['joinDate'] != null
           ? (data['joinDate'] as Timestamp).toDate()
           : DateTime.now(),
+      expiryDate: data['expiryDate'] != null
+          ? (data['expiryDate'] as Timestamp).toDate()
+          : DateTime.now(),
       address: data['address'] ?? '',
       isActive: data['isActive'] ?? true,
-      email: data['email'] ?? '',
-        expiryDate: data['expiryDate'] != null
-            ? (data['expiryDate'] as Timestamp).toDate()
-            : DateTime.now(),
+
+      paymentStatus: data['paymentStatus']?.toString() ?? 'Paid',
+      paidAmount: data['paidAmount']?.toString() ?? '0',
+      balance: data['balance']?.toString() ?? '0',
     );
   }
 
-  /// Convert Entity → Model
-  factory MemberModel.fromEntity(MemberEntity entity) {
+  factory MemberModel.fromEntity(MemberEntity e) {
     return MemberModel(
-      id: entity.id,
-      fullName: entity.fullName,
-      mobileNumber: entity.mobileNumber,
-      aadhaarNumber: entity.aadhaarNumber,
-      membership: entity.membership,
-      fee: entity.fee,
-      joinDate: entity.joinDate,
-      address: entity.address,
-        isActive: entity.isActive,
-        email: entity.email,
-        expiryDate: entity.expiryDate
+      id: e.id,
+      fullName: e.fullName,
+      mobileNumber: e.mobileNumber,
+      aadhaarNumber: e.aadhaarNumber,
+      membership: e.membership,
+      fee: e.fee,
+      joinDate: e.joinDate,
+      expiryDate: e.expiryDate,
+      address: e.address,
+      isActive: e.isActive,
+
+      paymentStatus: e.paymentStatus,
+      paidAmount: e.paidAmount,
+      balance: e.balance,
     );
   }
 
@@ -65,23 +74,27 @@ class MemberModel extends MemberEntity {
       'expiryDate': expiryDate,
       'address': address,
       'isActive': isActive,
-      'email': email
+
+      'paymentStatus': paymentStatus,
+      'paidAmount': paidAmount,
+      'balance': balance,
     };
   }
 
-  MemberEntity toEntity() {
-    return MemberEntity(
-        id: id,
-        fullName: fullName,
-        mobileNumber: mobileNumber,
-        aadhaarNumber: aadhaarNumber,
-        membership: membership,
-        fee: fee,
-        joinDate: joinDate,
-        address: address,
-        isActive: isActive,
-        email: email,
-        expiryDate: expiryDate
-    );
-  }
+  MemberEntity toEntity() => MemberEntity(
+    id: id,
+    fullName: fullName,
+    mobileNumber: mobileNumber,
+    aadhaarNumber: aadhaarNumber,
+    membership: membership,
+    fee: fee,
+    joinDate: joinDate,
+    expiryDate: expiryDate,
+    address: address,
+    isActive: isActive,
+
+    paymentStatus: paymentStatus,
+    paidAmount: paidAmount,
+    balance: balance,
+  );
 }

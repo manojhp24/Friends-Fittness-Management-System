@@ -7,6 +7,7 @@ import 'package:gym_management_system/features/dashboard/presentation/pages/dash
 import 'package:gym_management_system/features/dashboard/presentation/pages/main_screen.dart';
 import 'package:gym_management_system/features/members/domain/entities/member_entity.dart';
 import 'package:gym_management_system/features/members/presentation/pages/add_member_screen.dart';
+import 'package:gym_management_system/features/members/presentation/pages/member_renew_screen.dart';
 import 'package:gym_management_system/features/members/presentation/pages/members_screen.dart';
 
 import '../../features/authentication/presentation/provider/auth_provider.dart';
@@ -34,44 +35,60 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authState = ref.watch(authNotifierProvider);
 
-      final isLoggedIn = authState.user != null;
-      final isOnLoginPage = state.uri.toString().startsWith('/login');
-      final isOnForgotPage = state.uri.toString().startsWith('/forgot-password');
+      final loggedIn = authState.user != null;
+      final location = state.uri.toString();
 
-      if (!isLoggedIn) {
-        if (isOnLoginPage || isOnForgotPage) return null;
+      final onLogin = location.startsWith('/login');
+      final onForgot = location.startsWith('/forgot-password');
+
+      if (!loggedIn) {
+        if (onLogin || onForgot) return null;
         return '/login';
       }
 
-      // Only redirect login screen for authenticated users
-      if (isLoggedIn && isOnLoginPage) {
-        return '/main-screen';
-      }
+      if (loggedIn && onLogin) return '/main-screen';
 
       return null;
     },
 
-
-
     routes: [
+
+      // ---------------- AUTH ----------------
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-      GoRoute(path: '/dashboard', builder: (_, __) => const Dashboard()),
-      GoRoute(path: '/members', builder: (_, __) => const MembersScreen()),
-      GoRoute(path: '/main-screen', builder: (_, __) => const MainScreen()),
       GoRoute(path: '/forgot-password',
           builder: (_, __) => const ForgotPasswordScreen()),
-      GoRoute(path: "/member-details",
-          builder: (context, state) {
-            final member = state.extra as MemberEntity;
-            return MemberDetailScreen(member: member,);
-          }),
-      GoRoute(path: "/update-member", builder: (context, state) {
-        final member = state.extra as MemberEntity;
-        return AddMemberScreen(member: member,);
-      }),
+
+      // ---------------- MAIN SCREENS ----------------
+      GoRoute(path: '/main-screen', builder: (_, __) => const MainScreen()),
+      GoRoute(path: '/dashboard', builder: (_, __) => const Dashboard()),
+
+      // ---------------- MEMBERS ----------------
+      GoRoute(path: '/members', builder: (_, __) => const MembersScreen()),
+
       GoRoute(
-          path: "/add-member", builder: (context, state) => AddMemberScreen()),
+        path: '/member-details',
+        builder: (context, state) =>
+            MemberDetailScreen(
+              member: state.extra as MemberEntity,
+            ),
+      ),
+
+      GoRoute(
+        path: '/add-member',
+        builder: (_, __) => AddMemberScreen(),
+      ),
+
+      GoRoute(
+        path: '/update-member',
+        builder: (context, state) =>
+            AddMemberScreen(
+              member: state.extra as MemberEntity,
+            ),
+      ),
+
+      GoRoute(path: "/renew-member",
+          builder: (context, state) =>
+              MemberRenewScreen(member: state.extra as MemberEntity)),
     ],
   );
 });
-

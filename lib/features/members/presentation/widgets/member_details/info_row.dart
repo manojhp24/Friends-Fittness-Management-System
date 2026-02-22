@@ -5,12 +5,14 @@ class InfoRow extends StatelessWidget {
   final String info;
   final String value;
   final bool isCopyEnabled;
+  final Color? valueColor;
 
   const InfoRow({
     super.key,
     required this.info,
     required this.value,
     this.isCopyEnabled = false,
+    this.valueColor,
   });
 
   @override
@@ -29,7 +31,7 @@ class InfoRow extends StatelessWidget {
             child: Text(
               info,
               style: textTheme.labelMedium?.copyWith(
-                color: scheme.onSurfaceVariant,
+                color: valueColor ?? scheme.onSurfaceVariant,
               ), // FIXED typography
             ),
           ),
@@ -41,16 +43,27 @@ class InfoRow extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Flexible(
-                  child: Text(
-                    value,
-                    textAlign: TextAlign.end,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: scheme.onSurface,
-                    ), // FIXED typography
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    decoration: valueColor != null
+                        ? BoxDecoration(
+                      color: valueColor?.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(4),
+                    )
+                        : null,
+                    child: Text(
+                      value,
+                      textAlign: TextAlign.end,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: valueColor ?? scheme.onSurface,
+                      ),
+                    ),
                   ),
                 ),
+
+
                 if (isCopyEnabled) ...[
                   const SizedBox(width: 6),
                   InkWell(

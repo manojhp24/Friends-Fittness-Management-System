@@ -21,9 +21,38 @@ class FirebaseMembersRemoteDataSourceImpl implements MembersRemoteDataSource {
 
   @override
   Future<void> deleteMember(String memberId) async {
-    return await _firebaseFirestore
-        .collection("members")
+    final batch = _firebaseFirestore.batch();
+
+    final renewalRef = _firebaseFirestore
+        .collection('members')
         .doc(memberId)
-        .delete();
+        .collection('renewals');
+
+    final renewalsSnapshot = await renewalRef.get();
+
+    for(final doc in renewalsSnapshot.docs){
+      batch.delete(doc.reference);
+    }
+
+    batch.delete(_firebaseFirestore.collection('members').doc(memberId));
+
+    await batch.commit();
+  }
+
+  @override
+  Future<void> updateMember(String memberId,
+      Map<String, dynamic> member) async {
+    await _firebaseFirestore.collection("members").doc(memberId).update(
+        member);
+  }
+
+  @override
+  Future<void> addRenewal(String memberId,
+      Map<String, Object> memberRenewalData) async {
+    await _firebaseFirestore
+        .collection('members')
+        .doc(memberId)
+        .collection('renewals')
+        .add(memberRenewalData);
   }
 }

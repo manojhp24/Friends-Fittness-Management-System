@@ -29,19 +29,21 @@ class MembersScreen extends ConsumerWidget {
     }).toList();
 
     return DefaultTabController(
-      length: 4,
+      length: 3,
       child: Scaffold(
-        appBar: const CustomAppBar(
+        appBar: CustomAppBar(
           title: "Members",
           showBack: false,
           titleSpacing: 16,
           bottom: TabBar(
-            isScrollable: true,
-            padding: EdgeInsets.zero,
-            tabs: [
+            isScrollable: false,
+            indicatorSize: TabBarIndicatorSize.tab,
+            labelPadding: EdgeInsets.zero,
+            indicatorWeight: 3,
+
+            tabs: const [
               Tab(text: "All"),
               Tab(text: "Active"),
-              Tab(text: "Inactive"),
               Tab(text: "Expired"),
             ],
           ),
@@ -87,14 +89,6 @@ class MembersScreen extends ConsumerWidget {
                           ref,
                           filteredMembers
                               .where((m) => m.isActive)
-                              .toList(),
-                        ),
-
-                        _buildMembersListWithRefresh(
-                          context,
-                          ref,
-                          filteredMembers
-                              .where((m) => !m.isActive)
                               .toList(),
                         ),
 
@@ -178,7 +172,7 @@ Widget _buildMembersList(BuildContext context,
           mobile: '+91-${member.mobileNumber}',
           plan: member.membership,
           expiryDate: expiryDate,
-          daysLeft: daysLeft.toString(),
+          daysLeft:  daysLeft.toString() ,
           status: member.isActive ? "Active" : "Inactive",
         );
       },
