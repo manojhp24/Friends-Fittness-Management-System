@@ -1,3 +1,12 @@
+TECH STACK
+
+![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+![Firestore](https://img.shields.io/badge/Cloud%20Firestore-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+![Provider](https://img.shields.io/badge/Provider-State%20Management-blue?style=for-the-badge)
+![Clean%20Architecture](https://img.shields.io/badge/Clean%20Architecture-Design%20Pattern-darkgreen?style=for-the-badge)
+
 Friends Fitness Management System
 
 A Gym Management System built with Flutter using Clean Architecture.
