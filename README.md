@@ -22,6 +22,7 @@ ARCHITECTURE
 
 This project follows Clean Architecture.
 
+```
 features/
 │
 ├── data           -> Models, Data Sources, Repository Implementation
@@ -37,7 +38,7 @@ core/
 ├── validators     -> Input validation
 ├── helpers        -> Utility functions
 └── widgets        -> Reusable widgets
-
+```
 ------------------------------------------------------------
 
 TECH STACK
