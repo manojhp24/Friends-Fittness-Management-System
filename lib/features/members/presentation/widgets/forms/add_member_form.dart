@@ -87,14 +87,11 @@ class AddMemberFormState extends State<AddMemberForm> {
 
           SizedBox(height: AppSizes.spaceL(context)),
 
-          CustomInputField(
-            controller: aadhaarNumberController,
-            label: "Aadhaar Number",
-            keyboardType: TextInputType.number,
-          ),
-
-          SizedBox(height: AppSizes.spaceL(context)),
-
+          // CustomInputField(
+          //   controller: aadhaarNumberController,
+          //   label: "Aadhaar Number",
+          //   keyboardType: TextInputType.number,
+          // ),
           Row(
             children: [
               Expanded(

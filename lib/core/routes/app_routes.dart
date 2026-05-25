@@ -8,6 +8,7 @@ import 'package:gym_management_system/features/dashboard/presentation/pages/main
 import 'package:gym_management_system/features/members/domain/entities/member_entity.dart';
 import 'package:gym_management_system/features/members/presentation/pages/add_member_screen.dart';
 import 'package:gym_management_system/features/members/presentation/pages/member_renew_screen.dart';
+import 'package:gym_management_system/features/members/presentation/pages/member_renewal_history_screen.dart';
 import 'package:gym_management_system/features/members/presentation/pages/members_screen.dart';
 
 import '../../features/authentication/presentation/provider/auth_provider.dart';
@@ -17,7 +18,7 @@ class RouterNotifier extends ChangeNotifier {
   final Ref ref;
 
   RouterNotifier(this.ref) {
-    ref.listen(authNotifierProvider, (_, __) => notifyListeners());
+    ref.listen(authNotifierProvider, (_, _) => notifyListeners());
   }
 }
 
@@ -52,43 +53,47 @@ final routerProvider = Provider<GoRouter>((ref) {
     },
 
     routes: [
-
       // ---------------- AUTH ----------------
-      GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-      GoRoute(path: '/forgot-password',
-          builder: (_, __) => const ForgotPasswordScreen()),
+      GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+      GoRoute(
+        path: '/forgot-password',
+        builder: (_, _) => const ForgotPasswordScreen(),
+      ),
 
       // ---------------- MAIN SCREENS ----------------
-      GoRoute(path: '/main-screen', builder: (_, __) => const MainScreen()),
-      GoRoute(path: '/dashboard', builder: (_, __) => const Dashboard()),
+      GoRoute(path: '/main-screen', builder: (_, _) => const MainScreen()),
+      GoRoute(path: '/dashboard', builder: (_, _) => const Dashboard()),
 
       // ---------------- MEMBERS ----------------
-      GoRoute(path: '/members', builder: (_, __) => const MembersScreen()),
+      GoRoute(path: '/members', builder: (_, _) => const MembersScreen()),
 
       GoRoute(
         path: '/member-details',
         builder: (context, state) =>
-            MemberDetailScreen(
-              member: state.extra as MemberEntity,
-            ),
+            MemberDetailScreen(member: state.extra as MemberEntity),
       ),
 
-      GoRoute(
-        path: '/add-member',
-        builder: (_, __) => AddMemberScreen(),
-      ),
+      GoRoute(path: '/add-member', builder: (_, _) => AddMemberScreen()),
 
       GoRoute(
         path: '/update-member',
         builder: (context, state) =>
-            AddMemberScreen(
-              member: state.extra as MemberEntity,
-            ),
+            AddMemberScreen(member: state.extra as MemberEntity),
       ),
 
-      GoRoute(path: "/renew-member",
-          builder: (context, state) =>
-              MemberRenewScreen(member: state.extra as MemberEntity)),
+      GoRoute(
+        path: "/renew-member",
+        builder: (context, state) =>
+            MemberRenewScreen(member: state.extra as MemberEntity),
+      ),
+
+      GoRoute(
+        path: '/renewal-history',
+        builder: (context, state) {
+          final memberID = state.extra as String;
+          return MemberRenewalHistoryScreen(memberId: memberID,);
+        }
+      ),
     ],
   );
 });

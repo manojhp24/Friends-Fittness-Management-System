@@ -7,6 +7,7 @@ import 'package:gym_management_system/features/members/domain/repository/member_
 import 'package:gym_management_system/features/members/domain/usecases/add_member_use_case.dart';
 import 'package:gym_management_system/features/members/domain/usecases/delete_member_use_case.dart';
 import 'package:gym_management_system/features/members/domain/usecases/get_member_use_case.dart';
+import 'package:gym_management_system/features/members/domain/usecases/get_renewal_use_case.dart';
 import 'package:gym_management_system/features/members/domain/usecases/renew_member_usecase.dart';
 import 'package:gym_management_system/features/members/domain/usecases/update_member_use_case.dart';
 import 'package:gym_management_system/features/members/presentation/provider/add_member/add_member_notifier.dart';
@@ -32,6 +33,7 @@ void registerMemberDependencies() {
   sl.registerLazySingleton<UpdateMemberUseCase>(() =>
       UpdateMemberUseCase(sl()));
   sl.registerLazySingleton<RenewMemberUsecase>(() => RenewMemberUsecase(sl()));
+  sl.registerLazySingleton<GetRenewalUseCase>(() => GetRenewalUseCase(sl()));
 
   sl.registerFactory<AddMemberNotifier>(() => AddMemberNotifier(sl()));
   sl.registerFactory<MemberListNotifier>(() => MemberListNotifier(sl()));

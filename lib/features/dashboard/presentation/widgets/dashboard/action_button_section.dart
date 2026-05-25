@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../../core/config/app_sizes.dart';
 import 'action_button.dart';
@@ -8,6 +9,8 @@ class ActionButtonSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final space = AppSizes.spaceM(context);
+
     return Column(
       children: [
         Row(
@@ -16,39 +19,41 @@ class ActionButtonSection extends StatelessWidget {
               child: ActionButton(
                 icon: Icons.person_add_rounded,
                 label: "Add Member",
-                onTap: () {},
+                onTap: () => context.push("/add-member"),
               ),
             ),
-            SizedBox(width: AppSizes.spaceM(context)),
+            SizedBox(width: space),
             Expanded(
               child: ActionButton(
-                icon: Icons.event_rounded,
-                label: "Schedule",
-                onTap: () {},
+                icon: Icons.group_rounded,
+                label: "Members",
+                onTap: () => context.push("/members"),
               ),
             ),
           ],
         ),
-        SizedBox(height: AppSizes.spaceM(context)),
-        Row(
-          children: [
-            Expanded(
-              child: ActionButton(
-                icon: Icons.payments_rounded,
-                label: "Payments",
-                onTap: () {},
-              ),
-            ),
-            SizedBox(width: AppSizes.spaceM(context)),
-            Expanded(
-              child: ActionButton(
-                icon: Icons.receipt_long_rounded,
-                label: "Reports",
-                onTap: () {},
-              ),
-            ),
-          ],
-        ),
+
+        SizedBox(height: space),
+
+        // Row(
+        //   children: [
+        //     Expanded(
+        //       child: ActionButton(
+        //         icon: Icons.autorenew_rounded,
+        //         label: "Renew",
+        //         onTap: () => context.push("/member-renew"),
+        //       ),
+        //     ),
+        //     SizedBox(width: space),
+        //     Expanded(
+        //       child: ActionButton(
+        //         icon: Icons.warning_amber_rounded,
+        //         label: "Expiring",
+        //         onTap: () => context.push("/members?filter=expiring"),
+        //       ),
+        //     ),
+        //   ],
+        // ),
       ],
     );
   }

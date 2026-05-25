@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:gym_management_system/core/utils/data_state.dart';
 import 'package:gym_management_system/features/members/domain/usecases/get_member_use_case.dart';
@@ -5,24 +7,36 @@ import 'package:gym_management_system/features/members/presentation/provider/mem
 
 class MemberListNotifier extends StateNotifier<MemberListState> {
   final GetMembersUseCase _getMembersUseCase;
+  StreamSubscription? _streamSubscription ;
 
   MemberListNotifier(this._getMembersUseCase)
     : super(MemberListState.initial()) {
-    getMembers();
+    _listenMembers();
   }
 
-  Future<void> getMembers() async {
+  void _listenMembers(){
     state = state.copyWith(isLoading: true);
 
-    final result = await _getMembersUseCase();
-
-    if (result is DataSuccess) {
-      state = state.copyWith(isLoading: false, members: result.data ?? []);
-    } else {
-      state = state.copyWith(
-        isLoading: false,
-        error: result.message ?? 'Failed to load members',
-      );
-    }
+    _streamSubscription = _getMembersUseCase().listen((result) {
+      if(result is DataSuccess){
+        state = state.copyWith(
+          isLoading: false,
+          members: result.data ?? [],
+          error: null
+        );
+      }else if(result is DataFailed){
+        state = state.copyWith(
+          isLoading: false,
+          error: result.message ?? "Something went wrong"
+        );
+      }
+    });
   }
+
+  @override
+  void dispose(){
+    _streamSubscription?.cancel();
+    super.dispose();
+  }
+
 }

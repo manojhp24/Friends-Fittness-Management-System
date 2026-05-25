@@ -4,11 +4,13 @@ import 'package:gym_management_system/features/members/domain/entities/member_re
 
 abstract class MemberRepository {
   Future<DataState<String>> addMember(MemberEntity member);
-  Future<DataState<List<MemberEntity>>> getMembers();
+  Stream<DataState<List<MemberEntity>>> getMembers();
   Future<DataState<void>> deleteMember(String memberId);
 
   Future<DataState<void>> updateMember(MemberEntity member);
 
   Future<DataState<void>> renewMember(MemberEntity updateMember,
       MemberRenewalEntity memberRenewal);
+
+  Stream<List<MemberRenewalEntity>> getRenewals(String memberID);
 }

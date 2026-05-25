@@ -14,6 +14,7 @@ class MemberEntity extends Equatable {
   final String paymentStatus;
   final String paidAmount;
   final String balance;
+  final DateTime? lastRenewalDate;
 
   const MemberEntity({
     required this.id,
@@ -26,11 +27,10 @@ class MemberEntity extends Equatable {
     required this.expiryDate,
     required this.address,
     required this.isActive,
-
-    // new
     required this.paymentStatus,
     required this.paidAmount,
     required this.balance,
+    this.lastRenewalDate,
   });
 
   MemberEntity copyWith({
@@ -47,6 +47,7 @@ class MemberEntity extends Equatable {
     String? paymentStatus,
     String? paidAmount,
     String? balance,
+    DateTime? lastRenewalDate,
   }) {
     return MemberEntity(
       id: id ?? this.id,
@@ -62,6 +63,7 @@ class MemberEntity extends Equatable {
       paymentStatus: paymentStatus ?? this.paymentStatus,
       paidAmount: paidAmount ?? this.paidAmount,
       balance: balance ?? this.balance,
+      lastRenewalDate: lastRenewalDate ?? this.lastRenewalDate,
     );
   }
 
@@ -80,5 +82,6 @@ class MemberEntity extends Equatable {
     paymentStatus,
     paidAmount,
     balance,
+    lastRenewalDate,
   ];
 }

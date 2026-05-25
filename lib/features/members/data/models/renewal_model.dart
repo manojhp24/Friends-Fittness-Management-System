@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gym_management_system/features/members/domain/entities/member_renewal_entity.dart';
 
 class RenewalModel extends MemberRenewalEntity {
@@ -36,5 +37,32 @@ class RenewalModel extends MemberRenewalEntity {
       "expiryDate": expiryDate,
       "createdAt": createdAt,
     };
+  }
+  factory RenewalModel.fromMap(Map<String, dynamic> map) {
+    return RenewalModel(
+      plan: map['plan'] ?? '',
+      fee: map['fee'] ?? 0,
+      paymentStatus: map['paymentStatus'] ?? '',
+      paidAmount: map['paidAmount'] ?? 0,
+      balance: map['balance'] ?? 0,
+
+      // 👇 FIX HERE
+      startDate: (map['startDate'] as Timestamp).toDate(),
+      expiryDate: (map['expiryDate'] as Timestamp).toDate(),
+      createdAt: (map['createdAt'] as Timestamp).toDate(),
+    );
+  }
+
+  MemberRenewalEntity toEntity() {
+    return MemberRenewalEntity(
+      plan: plan,
+      fee: fee,
+      paymentStatus: paymentStatus,
+      paidAmount: paidAmount,
+      balance: balance,
+      startDate: startDate,
+      expiryDate: expiryDate,
+      createdAt: createdAt,
+    );
   }
 }

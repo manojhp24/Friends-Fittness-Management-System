@@ -3,16 +3,17 @@ import 'package:flutter/services.dart';
 
 class InfoRow extends StatelessWidget {
   final String info;
-  final String value;
+  final String? value;
+  final Widget? trailing;
   final bool isCopyEnabled;
   final Color? valueColor;
 
   const InfoRow({
     super.key,
     required this.info,
-    required this.value,
+    this.value,
     this.isCopyEnabled = false,
-    this.valueColor,
+    this.valueColor, this.trailing,
   });
 
   @override
@@ -39,7 +40,7 @@ class InfoRow extends StatelessWidget {
           // Value + copy icon
           Expanded(
             flex: 4,
-            child: Row(
+            child: trailing ?? Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Flexible(
@@ -52,7 +53,7 @@ class InfoRow extends StatelessWidget {
                     )
                         : null,
                     child: Text(
-                      value,
+                      value!,
                       textAlign: TextAlign.end,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.bodyMedium?.copyWith(
@@ -69,7 +70,7 @@ class InfoRow extends StatelessWidget {
                   InkWell(
                     borderRadius: BorderRadius.circular(6),
                     onTap: () {
-                      Clipboard.setData(ClipboardData(text: value));
+                      Clipboard.setData(ClipboardData(text: value!));
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("$info Copied")),
                       );

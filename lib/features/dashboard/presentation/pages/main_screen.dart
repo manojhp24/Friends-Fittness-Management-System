@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gym_management_system/core/helpers/theme_helpers.dart';
 import 'package:gym_management_system/features/members/presentation/pages/members_screen.dart';
-import 'package:gym_management_system/features/members/presentation/settings_screen.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
-import '../../../attendance/presentation/pages/attendance_screen.dart';
 import '../provider/main_nav_provider.dart';
 import 'dashboard.dart';
 
@@ -13,8 +11,7 @@ import 'dashboard.dart';
 final screens = [
   Dashboard(),
   MembersScreen(),
-  AttendanceScreen(),
-  SettingsScreen(),
+  // SettingsScreen(),
 ];
 
 class MainScreen extends ConsumerWidget {
@@ -35,8 +32,7 @@ class MainScreen extends ConsumerWidget {
         destinations: const [
           NavigationDestination(icon: Icon(Iconsax.home), label: "Home"),
           NavigationDestination(icon: Icon(Iconsax.people), label: "Members"),
-          NavigationDestination(icon: Icon(Iconsax.calendar_tick), label: "Attendance"),
-          NavigationDestination(icon: Icon(Iconsax.setting), label: "Settings"),
+          // NavigationDestination(icon: Icon(Iconsax.setting), label: "Settings"),
         ],
       ),
     );

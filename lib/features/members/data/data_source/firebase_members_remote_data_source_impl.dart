@@ -14,9 +14,10 @@ class FirebaseMembersRemoteDataSourceImpl implements MembersRemoteDataSource {
   }
 
   @override
-  Future<List<MemberModel>> getMembers() async {
-    final snapshot = await _firebaseFirestore.collection('members').get();
-    return snapshot.docs.map((doc) => MemberModel.formFirestore(doc)).toList();
+  Stream<List<MemberModel>> getMembers()  {
+    return _firebaseFirestore.collection("members").snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => MemberModel.fromFirestore(doc)).toList();
+    });
   }
 
   @override
@@ -30,7 +31,7 @@ class FirebaseMembersRemoteDataSourceImpl implements MembersRemoteDataSource {
 
     final renewalsSnapshot = await renewalRef.get();
 
-    for(final doc in renewalsSnapshot.docs){
+    for (final doc in renewalsSnapshot.docs) {
       batch.delete(doc.reference);
     }
 
@@ -40,19 +41,33 @@ class FirebaseMembersRemoteDataSourceImpl implements MembersRemoteDataSource {
   }
 
   @override
-  Future<void> updateMember(String memberId,
-      Map<String, dynamic> member) async {
-    await _firebaseFirestore.collection("members").doc(memberId).update(
-        member);
+  Future<void> updateMember(
+    String memberId,
+    Map<String, dynamic> member,
+  ) async {
+    await _firebaseFirestore.collection("members").doc(memberId).update(member);
   }
 
   @override
-  Future<void> addRenewal(String memberId,
-      Map<String, Object> memberRenewalData) async {
+  Future<void> addRenewal(
+    String memberId,
+    Map<String, Object> memberRenewalData,
+  ) async {
     await _firebaseFirestore
         .collection('members')
         .doc(memberId)
         .collection('renewals')
         .add(memberRenewalData);
+  }
+
+  @override
+  Stream<List<Map<String, dynamic>>> getRenewals(String memberId) {
+    return _firebaseFirestore
+        .collection('members')
+        .doc(memberId)
+        .collection('renewals')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
 }

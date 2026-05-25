@@ -9,9 +9,9 @@ import 'package:gym_management_system/features/members/domain/usecases/renew_mem
 import 'package:gym_management_system/features/members/presentation/provider/renew_member/renew_member_provider.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
-import '../widgets/member_details/deatils_card.dart';
-import '../widgets/member_details/info_row.dart';
-import '../widgets/member_details/section_heading.dart';
+import '../widgets/shared/deatils_card.dart';
+import '../widgets/shared/info_row.dart';
+import '../widgets/shared/section_heading.dart';
 import '../widgets/shared/custom_input_field.dart';
 
 class MemberRenewScreen extends ConsumerStatefulWidget {
@@ -208,7 +208,7 @@ class _MemberRenewScreenState extends ConsumerState<MemberRenewScreen> {
                     // Payment status
                     DropdownButtonFormField(
                       decoration: InputDecoration(labelText: "Payment Status"),
-                      value: paymentStatus,
+                      initialValue: paymentStatus,
                       items: ["Paid", "Partial", "Unpaid"]
                           .map(
                             (e) => DropdownMenuItem(value: e, child: Text(e)),
