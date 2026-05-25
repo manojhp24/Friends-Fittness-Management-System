@@ -43,20 +43,12 @@ class StatsCard extends StatelessWidget {
                 color: accentColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color: accentColor,
-                size: 22,
-              ),
+              child: Icon(icon, color: accentColor, size: 22),
             ),
             const SizedBox(height: 12),
             Text(
               value,
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .headlineSmall
-                  ?.copyWith(
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: scheme.onSurface,
               ),
@@ -66,26 +58,18 @@ class StatsCard extends StatelessWidget {
 
             Text(
               title,
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(
-                color: scheme.onSurfaceVariant,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
             ),
 
             if (subTitle != null) ...[
               const SizedBox(height: 6),
               Text(
                 subTitle!,
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
               ),
             ],
           ],
@@ -94,4 +78,3 @@ class StatsCard extends StatelessWidget {
     );
   }
 }
-

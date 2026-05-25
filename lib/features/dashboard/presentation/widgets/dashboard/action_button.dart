@@ -24,17 +24,27 @@ class ActionButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppSizes.radius(context)),
-        splashColor: scheme.primary.withValues(alpha: 0.1),
-        highlightColor: scheme.primary.withValues(alpha: 0.05),
+        splashColor: scheme.primary.withValues(alpha: 0.12),
+        highlightColor: scheme.primary.withValues(alpha: 0.08),
         child: Ink(
           padding: EdgeInsets.symmetric(
             vertical: AppSizes.spaceM(context),
             horizontal: AppSizes.cardPadding(context),
           ),
           decoration: BoxDecoration(
-            color: scheme.surfaceContainerHigh,
+            color: scheme.surfaceContainer,
             borderRadius: BorderRadius.circular(AppSizes.radius(context)),
-            border: Border.all(color: scheme.outlineVariant, width: 1),
+            border: Border.all(
+              color: scheme.outlineVariant.withValues(alpha: 0.5),
+              width: 0.8,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: scheme.primary.withValues(alpha: 0.06),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -44,13 +54,16 @@ class ActionButton extends StatelessWidget {
                 color: scheme.primary,
                 size: AppSizes.buttonIconSize(context),
               ),
-              SizedBox(width: AppSizes.spaceS(context)),
-              Text(
-                label,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.1,
+              SizedBox(width: AppSizes.spaceS(context) * 1.2),
+              Flexible(
+                child: Text(
+                  label,
+                  style: textTheme.labelLarge?.copyWith(
+                    color: scheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.05,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

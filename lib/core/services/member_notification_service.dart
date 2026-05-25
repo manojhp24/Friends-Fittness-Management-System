@@ -6,45 +6,64 @@ import '../di/service_locator.dart';
 class MemberNotificationService {
   final NotificationService _notificationService = sl<NotificationService>();
 
+  // Generate deterministic ID from member ID to avoid collisions
+  int _generateNotificationId(String memberId, int offset) {
+    return memberId.hashCode + offset;
+  }
+
   Future<void> scheduleExpiry(MemberEntity member) async {
+    try {
+      final now = DateTime.now();
+      final expiry = member.expiryDate;
 
-    final now = DateTime.now();
+      // Calculate alert times
+      // Tomorrow alert: 1 day before expiry at 9 AM
+      final expiryAt9Am = DateTime(expiry.year, expiry.month, expiry.day, 9);
 
-    final expiry = member.expiryDate;
+      var tomorrowAlert = expiryAt9Am.subtract(const Duration(days: 1));
+      var expiryAlert = expiryAt9Am;
 
-    final expiryWithTime = DateTime(
-      expiry.year,
-      expiry.month,
-      expiry.day,
-      9
-    );
+      // If alerts are in the past, schedule them in the near future for testing
+      if (tomorrowAlert.isBefore(now)) {
+        tomorrowAlert = now.add(const Duration(minutes: 1));
+      }
+      if (expiryAlert.isBefore(now)) {
+        expiryAlert = now.add(const Duration(minutes: 2));
+      }
 
-    final tomorrowAlert = expiryWithTime.subtract(const Duration(days: 1));
+      print("\n📅 Scheduling expiry notifications for ${member.fullName}");
+      print("  Current time: $now");
+      print("  Expiry date: $expiry");
+      print("  Tomorrow alert: $tomorrowAlert");
+      print("  Expiry alert: $expiryAlert");
 
+      // Cancel any previous notifications for this member
+      final idTomorrow = _generateNotificationId(member.id, 0);
+      final idExpiry = _generateNotificationId(member.id, 1);
 
-    print("Now: ${DateTime.now()}");
-    print("Expiry: $expiry");
+      await _notificationService.cancelNotification(idTomorrow);
+      await _notificationService.cancelNotification(idExpiry);
 
-    await _notificationService.cancelNotification(member.id.hashCode);
-    await _notificationService.cancelNotification(member.id.hashCode + 1);
-
-    if (tomorrowAlert.isAfter(now)) {
+      // Schedule tomorrow alert
       await _notificationService.scheduleNotification(
-        id: member.id.hashCode,
-        title: "Expiry Alert",
-        body: "${member.fullName} membership expires tomorrow",
+        id: idTomorrow,
+        title: "⚠️ Expiry Alert",
+        body: "${member.fullName}'s membership expires tomorrow",
         date: tomorrowAlert,
       );
-    }
+      print("  ✓ Scheduled tomorrow alert\n");
 
-
-    if (expiryWithTime.isAfter(now)) {
+      // Schedule expiry date alert
       await _notificationService.scheduleNotification(
-        id: member.id.hashCode + 1,
-        title: "Expired",
-        body: "${member.fullName} membership expires today",
-        date: expiryWithTime,
+        id: idExpiry,
+        title: "🚨 Membership Expired",
+        body: "${member.fullName}'s membership expires today",
+        date: expiryAlert,
       );
+      print("  ✓ Scheduled expiry alert\n");
+    } catch (e) {
+      print("\u2717 Error scheduling expiry notifications: $e");
+      rethrow;
     }
   }
 }

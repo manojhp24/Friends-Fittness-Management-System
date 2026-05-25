@@ -13,6 +13,7 @@ class ActionButtonSection extends StatelessWidget {
 
     return Column(
       children: [
+        // Primary action row
         Row(
           children: [
             Expanded(
@@ -35,25 +36,26 @@ class ActionButtonSection extends StatelessWidget {
 
         SizedBox(height: space),
 
-        // Row(
-        //   children: [
-        //     Expanded(
-        //       child: ActionButton(
-        //         icon: Icons.autorenew_rounded,
-        //         label: "Renew",
-        //         onTap: () => context.push("/member-renew"),
-        //       ),
-        //     ),
-        //     SizedBox(width: space),
-        //     Expanded(
-        //       child: ActionButton(
-        //         icon: Icons.warning_amber_rounded,
-        //         label: "Expiring",
-        //         onTap: () => context.push("/members?filter=expiring"),
-        //       ),
-        //     ),
-        //   ],
-        // ),
+        // Secondary action row
+        Row(
+          children: [
+            Expanded(
+              child: ActionButton(
+                icon: Icons.autorenew_rounded,
+                label: "Renew",
+                onTap: () => context.push("/member-renew"),
+              ),
+            ),
+            SizedBox(width: space),
+            Expanded(
+              child: ActionButton(
+                icon: Icons.warning_amber_rounded,
+                label: "Expiring",
+                onTap: () => context.push("/members?filter=expiring"),
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

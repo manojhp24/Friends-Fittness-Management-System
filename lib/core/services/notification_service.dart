@@ -12,15 +12,44 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
-    print("Notification init called"); // 👈 add
-    const android = AndroidInitializationSettings("@mipmap/ic_launcher");
-    const settings = InitializationSettings(android: android);
-    await _plugin.initialize(settings: settings);
-    await _plugin
+    try {
+      const android = AndroidInitializationSettings("@mipmap/ic_launcher");
+      const settings = InitializationSettings(android: android);
+      await _plugin.initialize(settings: settings);
+
+      // Create Android notification channel (required for Android 8+)
+      await _createNotificationChannel();
+
+      // Request notification permission
+      await _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.requestNotificationsPermission();
+
+      print("✓ Notification service initialized successfully");
+    } catch (e) {
+      print("✗ Notification initialization failed: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> _createNotificationChannel() async {
+    final androidPlugin = _plugin
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.requestNotificationsPermission();
+        >();
+
+    await androidPlugin?.createNotificationChannel(
+      AndroidNotificationChannel(
+        'expiry_channel',
+        'Expiry Notifications',
+        description: 'Notification for membership expiry alerts',
+        importance: Importance.max,
+        enableVibration: true,
+        enableLights: true,
+      ),
+    );
   }
 
   Future<void> scheduleNotification({
@@ -29,24 +58,37 @@ class NotificationService {
     required String body,
     required DateTime date,
   }) async {
-    const androidDetails = AndroidNotificationDetails(
-      'expiry_channel',
-      'Expiry Notifications',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
+    try {
+      const androidDetails = AndroidNotificationDetails(
+        'expiry_channel',
+        'Expiry Notifications',
+        channelDescription: 'Notification for membership expiry',
+        importance: Importance.max,
+        priority: Priority.high,
+        enableVibration: true,
+        enableLights: true,
+      );
 
-    const notificationDetails = NotificationDetails(android: androidDetails);
-    print("Scheduling at: $date");
+      const notificationDetails = NotificationDetails(android: androidDetails);
+      final scheduledDate = tz.TZDateTime.from(date, tz.local);
 
-    await _plugin.zonedSchedule(
-      id: id,
-      title: title,
-      body: body,
-      scheduledDate: tz.TZDateTime.from(date, tz.local),
-      notificationDetails: notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-    );
+      print("📅 Scheduling notification: id=$id at $scheduledDate");
+
+      await _plugin.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: scheduledDate,
+        notificationDetails: notificationDetails,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.dateAndTime,
+      );
+
+      print("✓ Notification scheduled successfully");
+    } catch (e) {
+      print("✗ Error scheduling notification: $e");
+      rethrow;
+    }
   }
 
   Future<void> showNotification({
@@ -54,24 +96,40 @@ class NotificationService {
     required String title,
     required String body,
   }) async {
-    const androidDetails = AndroidNotificationDetails(
-      'expiry_channel',
-      'Expiry Notifications',
-      channelDescription: 'Notification for membership expiry',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-    const notificationDetails = NotificationDetails(android: androidDetails);
+    try {
+      const androidDetails = AndroidNotificationDetails(
+        'expiry_channel',
+        'Expiry Notifications',
+        channelDescription: 'Notification for membership expiry',
+        importance: Importance.max,
+        priority: Priority.high,
+        enableVibration: true,
+        enableLights: true,
+      );
+      const notificationDetails = NotificationDetails(android: androidDetails);
 
-    await _plugin.show(
-      id: id,
-      title: title,
-      body: body,
-      notificationDetails: notificationDetails,
-    );
+      print("📬 Showing notification: id=$id");
+
+      await _plugin.show(
+        id: id,
+        title: title,
+        body: body,
+        notificationDetails: notificationDetails,
+      );
+
+      print("✓ Notification shown successfully");
+    } catch (e) {
+      print("✗ Error showing notification: $e");
+      rethrow;
+    }
   }
 
   Future<void> cancelNotification(int id) async {
-    await _plugin.cancel(id: id);
+    try {
+      await _plugin.cancel(id: id);
+      print("🗑️ Cancelled notification: id=$id");
+    } catch (e) {
+      print("✗ Error cancelling notification: $e");
+    }
   }
 }

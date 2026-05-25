@@ -17,12 +17,8 @@ class Dashboard extends ConsumerStatefulWidget {
 class _DashboardState extends ConsumerState<Dashboard> {
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme
-        .of(context)
-        .colorScheme;
-    final textTheme = Theme
-        .of(context)
-        .textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -57,12 +53,10 @@ class _DashboardState extends ConsumerState<Dashboard> {
             ),
             SizedBox(height: AppSizes.spaceM(context)),
 
-            ActionButtonSection()
+            ActionButtonSection(),
           ],
         ),
       ),
     );
   }
 }
-
-
